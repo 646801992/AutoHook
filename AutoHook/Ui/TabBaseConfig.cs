@@ -112,7 +112,7 @@ abstract class TabBaseConfig : IDisposable
     public void DrawInputDoubleMinTime(HookConfig cfg)
     {
         ImGui.SetNextItemWidth(100 * ImGuiHelpers.GlobalScale);
-        if (ImGui.InputDouble("最长等待", ref cfg.MinTimeDelay, .1, 1, "%.1f%"))
+        if (ImGui.InputDouble("最短等待", ref cfg.MinTimeDelay, .1, 1, "%.1f%"))
         {
             switch (cfg.MinTimeDelay)
             {

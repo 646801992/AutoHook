@@ -158,7 +158,7 @@ abstract class TabBaseConfig : IDisposable
                 if (cfg.UseDoubleHook) cfg.UseTripleHook = false;
                 Service.Configuration.Save();
             }
-            if (ImGui.Checkbox("使用双提 (当 gp > 700)", ref cfg.UseTripleHook))
+            if (ImGui.Checkbox("使用三提 (当 gp > 700)", ref cfg.UseTripleHook))
             {
                 if (cfg.UseTripleHook) cfg.UseDoubleHook = false;
                 Service.Configuration.Save();
@@ -277,16 +277,15 @@ abstract class TabBaseConfig : IDisposable
         {
             ImGui.TextColored(ImGuiColors.DalamudYellow, "停止垂钓");
             ImGui.Spacing();
-            if (DrawUtil.Checkbox("钓到...", ref cfg.StopAfterCaught, "- If this config is a bait: Stops fishing after X amount of fish is caught\n- If this config is a fish: Stops fishing after it being caught X amount of times"))
+            if (DrawUtil.Checkbox("钓起", ref cfg.StopAfterCaught, "- 如果在鱼饵中设置: 会根据提钩次数计数停止。\n- 如果在钓鱼中设置: 会根据鱼获数量计数停止。"))
             {
 
             }
-
             if (cfg.StopAfterCaught)
             {
                 ImGui.Indent();
                 ImGui.SetNextItemWidth(90 * ImGuiHelpers.GlobalScale);
-                if (ImGui.InputInt("次", ref cfg.StopAfterCaughtLimit))
+                if (ImGui.InputInt("次后", ref cfg.StopAfterCaughtLimit))
                 {
                     if (cfg.StopAfterCaughtLimit < 1)
                         cfg.StopAfterCaughtLimit = 1;

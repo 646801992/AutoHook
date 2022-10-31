@@ -81,7 +81,7 @@ public class HookingManager : IDisposable
 
         CurrentSetting = HookSettings.FirstOrDefault(mooch => mooch.BaitName.Equals(CurrentBait));
 
-        if (CurrentSetting == null)
+        if (CurrentSetting == null || !CurrentSetting.Enabled)
         {
             HookConfig defaultConfig;
 
@@ -93,9 +93,6 @@ public class HookingManager : IDisposable
             if (defaultConfig.Enabled)
                 CurrentSetting = defaultConfig;
         }
-
-        else if (!CurrentSetting.Enabled)
-            CurrentSetting = null;
 
         if (CurrentSetting == null)
             PluginLog.Debug("No config found. Not hooking");

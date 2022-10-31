@@ -16,7 +16,7 @@ class TabBaitFish : TabBaseConfig
 
     public override void DrawHeader()
     {
-        ImGui.TextWrapped("Here you can customize which hook to use based on the current bait or fish being mooched.\nIf a bait/fish is not specified, the default behavior (General Tab) will be used instead.");
+        ImGui.TextWrapped("你可以在这里自定义使用特定鱼饵或以小钓大鱼垂钓时的设置。如果未对特定鱼饵添加设置或未启用该特定设置，默认会使用通用设置。");
         if (ImGui.Button("添加"))
         {
             var setting = new HookConfig("编辑");

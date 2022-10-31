@@ -20,9 +20,14 @@ internal class TabGeneral : TabBaseConfig
 
         ImGui.Separator();
         ImGui.Spacing();
-        if (ImGui.Button("Click here to report an issue or make a suggestion"))
+        if (ImGui.Button("反馈建议（功能）"))
         {
             Process.Start(new ProcessStartInfo { FileName = "https://github.com/InitialDet/AutoHook/issues", UseShellExecute = true });
+        }
+        ImGui.SameLine();  
+        if (ImGui.Button("反馈建议（汉化）"))
+        {
+            Process.Start(new ProcessStartInfo { FileName = "https://github.com/gamous/AutoHook/issues", UseShellExecute = true });
         }
         ImGui.Spacing();
 

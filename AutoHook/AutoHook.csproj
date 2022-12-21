@@ -2,11 +2,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<Authors>Det</Authors>
-		<Version>2.3.0.4</Version>
+		<Version>2.3.0.5</Version>
 		<Description>Auto hooks for you</Description>
 		<PackageProjectUrl>https://github.com/InitialDet/AutoHook</PackageProjectUrl>
 		<Configurations>Release;Debug</Configurations>
-		<TargetFramework>net5.0-windows</TargetFramework>
+		<TargetFramework>net6.0-windows</TargetFramework>
 		<Platforms>x64</Platforms>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
@@ -14,7 +14,7 @@
 		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<OutputPath>D:\Games\FFXIVLauncher\XIVLauncherCN\Roaming\devPlugins\AutoHook</OutputPath>
+		
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -23,6 +23,7 @@
 
 	<PropertyGroup>
 		<DalamudLibPath>$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+		<OutputPath>$(appdata)\XIVLauncher\devPlugins\AutoHook</OutputPath>
 	</PropertyGroup>
 	
 	<ItemGroup>

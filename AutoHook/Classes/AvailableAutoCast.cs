@@ -12,7 +12,7 @@ public sealed class AutoMakeShiftBait : BaseActionCast
 {
     public int MakeshiftBaitStacks = 5;
 
-    public AutoMakeShiftBait() : base("MakeShift Bait", IDs.Actions.MakeshiftBait, ActionType.Spell)
+    public AutoMakeShiftBait() : base("熟练渔技", IDs.Actions.MakeshiftBait, ActionType.Spell)
     {
 
     }
@@ -45,7 +45,7 @@ public sealed class AutoThaliaksFavor : BaseActionCast
     public int ThaliaksFavorStacks = 3;
     public int ThaliaksFavorRecover = 150;
 
-    public AutoThaliaksFavor() : base("Thaliak's Favor", IDs.Actions.ThaliaksFavor, ActionType.Spell)
+    public AutoThaliaksFavor() : base("沙利亚克的恩宠", IDs.Actions.ThaliaksFavor, ActionType.Spell)
     {
 
     }
@@ -65,7 +65,7 @@ public sealed class AutoThaliaksFavor : BaseActionCast
 public sealed class AutoChum : BaseActionCast
 {
     public bool OnlyUseWithIntuition = false;
-    public AutoChum() : base("Chum", IDs.Actions.Chum, ActionType.Spell)
+    public AutoChum() : base("撒饵", IDs.Actions.Chum, ActionType.Spell)
     {
         DoesCancelMooch = true;
     }
@@ -84,7 +84,7 @@ public sealed class AutoChum : BaseActionCast
 public class AutoFishEyes : BaseActionCast
 {
 
-    public AutoFishEyes() : base("Fish Eyes", IDs.Actions.FishEyes, ActionType.Spell)
+    public AutoFishEyes() : base("鱼眼", IDs.Actions.FishEyes, ActionType.Spell)
     {
         DoesCancelMooch = true;
     }
@@ -100,7 +100,7 @@ public class AutoFishEyes : BaseActionCast
 public sealed class AutoIdenticalCast : BaseActionCast
 {
     // this option is based on the custom BaitConfig, not the AutoCast tab
-    public AutoIdenticalCast() : base("Identical Cast", Data.IDs.Actions.IdenticalCast, ActionType.Spell)
+    public AutoIdenticalCast() : base("专一垂钓", Data.IDs.Actions.IdenticalCast, ActionType.Spell)
     {
         Enabled = true;
     }
@@ -117,7 +117,7 @@ public sealed class AutoSurfaceSlap : BaseActionCast
 {
 
     // this option is based on the BaitConfig, not the AutoCast tab
-    public AutoSurfaceSlap() : base("Surface Slap", Data.IDs.Actions.SurfaceSlap, ActionType.Spell)
+    public AutoSurfaceSlap() : base("拍击水面", Data.IDs.Actions.SurfaceSlap, ActionType.Spell)
     {
         Enabled = true;
     }
@@ -137,7 +137,7 @@ public class AutoPrizeCatch : BaseActionCast
     public bool UseOnlyWithIdenticalCast = false;
 
 
-    public AutoPrizeCatch() : base("Prize Catch", Data.IDs.Actions.PrizeCatch, ActionType.Spell)
+    public AutoPrizeCatch() : base("大鱼猎手", Data.IDs.Actions.PrizeCatch, ActionType.Spell)
     {
         DoesCancelMooch = true;
     }
@@ -171,7 +171,7 @@ public class AutoPrizeCatch : BaseActionCast
 #region AutoPatienceI
 public class AutoPatienceI : BaseActionCast
 {
-    public AutoPatienceI() : base("Patience I", Data.IDs.Actions.Patience, ActionType.Spell)
+    public AutoPatienceI() : base("耐心I", Data.IDs.Actions.Patience, ActionType.Spell)
     {
         DoesCancelMooch = true;
     }
@@ -195,7 +195,7 @@ public class AutoPatienceI : BaseActionCast
 #region AutoPatienceII
 public class AutoPatienceII : BaseActionCast
 {
-    public AutoPatienceII() : base("Patience II", Data.IDs.Actions.Patience2, ActionType.Spell)
+    public AutoPatienceII() : base("耐心II", Data.IDs.Actions.Patience2, ActionType.Spell)
     {
         DoesCancelMooch = true;
     }
@@ -219,7 +219,7 @@ public class AutoPatienceII : BaseActionCast
 #region AutoDoubleHook
 public sealed class AutoDoubleHook : BaseActionCast
 {
-    public AutoDoubleHook() : base("Double Hook", Data.IDs.Actions.DoubleHook, ActionType.Spell)
+    public AutoDoubleHook() : base("双重提钩", Data.IDs.Actions.DoubleHook, ActionType.Spell)
     {
 
     }
@@ -233,7 +233,7 @@ public sealed class AutoDoubleHook : BaseActionCast
 #region AutoTripleHook
 public sealed class AutoTripleHook : BaseActionCast
 {
-    public AutoTripleHook() : base("Triple Hook", Data.IDs.Actions.TripleHook, ActionType.Spell)
+    public AutoTripleHook() : base("三重提钩", Data.IDs.Actions.TripleHook, ActionType.Spell)
     {
 
     }
@@ -249,7 +249,7 @@ public sealed class AutoTripleHook : BaseActionCast
 public class AutoHICordial : BaseActionCast
 {
     readonly uint itemGPRecovery = 400;
-    public AutoHICordial() : base("Hi-Cordial", IDs.Item.HiCordial, ActionType.Item)
+    public AutoHICordial() : base("高级强心剂", IDs.Item.HiCordial, ActionType.Item)
     {
         GPThreshold = 1;
     }
@@ -278,7 +278,7 @@ public class AutoHICordial : BaseActionCast
 public class AutoCordial : BaseActionCast
 {
     readonly uint itemGPRecovery = 300;
-    public AutoCordial() : base("Cordial", Data.IDs.Item.Cordial, ActionType.Item)
+    public AutoCordial() : base("强心剂", Data.IDs.Item.Cordial, ActionType.Item)
     {
         GPThreshold = 1;
     }
@@ -307,7 +307,7 @@ public class AutoCordial : BaseActionCast
 public class AutoHQCordial : BaseActionCast
 {
     readonly uint itemGPRecovery = 350;
-    public AutoHQCordial() : base("HQ Cordial", IDs.Item.HQCordial, ActionType.Item)
+    public AutoHQCordial() : base("强心剂HQ", IDs.Item.HQCordial, ActionType.Item)
     {
         GPThreshold = 1;
     }

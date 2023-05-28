@@ -48,7 +48,7 @@ public class PluginUI : Window, IDisposable
         if (!IsOpen)
             return;
 
-        Utils.DrawUtil.Checkbox("Enable AutoHook", ref Service.Configuration.PluginEnabled, "Enables/Disables the plugin for you");
+        Utils.DrawUtil.Checkbox("启用自动钓鱼", ref Service.Configuration.PluginEnabled, "启用/禁用该插件");
         ShowKofi();
         //paypal bad madge
         //ShowPaypal();
@@ -56,11 +56,11 @@ public class PluginUI : Window, IDisposable
 
         if (Service.Configuration.PluginEnabled)
         {
-            ImGui.TextColored(ImGuiColors.HealerGreen, "Plugin Enabled");
+            ImGui.TextColored(ImGuiColors.HealerGreen, "已启用");
         }
         else
         {
-            ImGui.TextColored(ImGuiColors.DalamudRed, "Plugin Disabled");
+            ImGui.TextColored(ImGuiColors.DalamudRed, "已禁用");
         }
         ImGui.Unindent();
         ImGui.Spacing();

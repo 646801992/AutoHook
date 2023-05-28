@@ -14,7 +14,7 @@
 		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<OutputPath>bin\$(Configuration)\</OutputPath>
+		
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -23,6 +23,7 @@
 
 	<PropertyGroup>
 		<DalamudLibPath>$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+		<OutputPath>$(appdata)\XIVLauncher\devPlugins\AutoHook</OutputPath>
 	</PropertyGroup>
 	
 	<ItemGroup>

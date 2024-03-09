@@ -1,6 +1,9 @@
-﻿using System.Numerics;
-using Dalamud.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Numerics;
+using AutoHook.Resources.Localization;
 using Dalamud.Interface.Components;
+using Dalamud.Interface.Utility;
 using ImGuiNET;
 
 namespace AutoHook.Utils;
@@ -35,7 +38,7 @@ public static class DrawUtil
 
     public static bool EditNumberField(string label, float fieldWidth, ref int refValue, string helpText = "")
     {
-        ImGui.Text(label);
+        TextV(label);
 
         ImGui.SameLine();
 
@@ -51,33 +54,33 @@ public static class DrawUtil
         return clicked;
     }
 
-    public static bool Checkbox(string label, ref bool refValue, string helpText = "")
+    public static void TextV(string s)
+    {
+        var cur = ImGui.GetCursorPos();
+        ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0);
+        ImGui.Button("");
+        ImGui.PopStyleVar();
+        ImGui.SameLine();
+        ImGui.SetCursorPos(cur);
+        ImGui.TextUnformatted(s);
+    }
+
+    public static bool Checkbox(string label, ref bool refValue, string helpText = "", bool hoverHelpText = false)
     {
         var clicked = ImGui.Checkbox($"{label}", ref refValue);
 
         if (helpText != string.Empty)
         {
-            ImGuiComponents.HelpMarker(helpText);
+            if (hoverHelpText)
+            {
+                if (ImGui.IsItemHovered())
+                    ImGui.SetTooltip(helpText);
+            }
+            else
+                ImGuiComponents.HelpMarker(helpText);
         }
 
         return clicked;
-    }
-
-    public static void CompleteIncomplete(bool complete)
-    {
-        ConditionalText(complete, "Complete", "Incomplete");
-    }
-
-    public static void ConditionalText(bool condition, string trueString, string falseString)
-    {
-        if (condition)
-        {
-            ImGui.TextColored(new Vector4(0, 255, 0, 0.8f), trueString);
-        }
-        else
-        {
-            ImGui.TextColored(new Vector4(185, 0, 0, 0.8f), falseString);
-        }
     }
 
     public static void DrawWordWrappedString(string message)
@@ -114,5 +117,82 @@ public static class DrawUtil
 
         ImGui.PopStyleVar();
     }
-}
 
+    private static string _filterText = "";
+    
+    public static void DrawComboSelector<T>(
+        List<T> itemList,
+        Func<T, string> getItemName,
+        string selectedItem,
+        Action<T> onSelect)
+    {
+        
+        ImGui.SetNextItemWidth(200 * ImGuiHelpers.GlobalScale);
+        
+        if (ImGui.BeginCombo("###search", selectedItem))
+        {
+            string clearText = "";
+            ImGui.SetNextItemWidth(190 * ImGuiHelpers.GlobalScale);
+            if (ImGui.InputTextWithHint("", UIStrings.Search_Hint, ref clearText, 100))
+            {
+                _filterText = new string(clearText);
+            }
+            
+            ImGui.Separator();
+
+            if (ImGui.BeginChild("ComboSelector", new Vector2(0, 100 * ImGuiHelpers.GlobalScale), false))
+            {
+                
+                foreach (var item in itemList)
+                {
+                    var itemName = getItemName(item);
+                    var filterTextLower = _filterText.ToLower();
+
+                    if (_filterText.Length != 0 && !itemName.ToLower().Contains(filterTextLower))
+                        continue;
+
+                    if (ImGui.Selectable(itemName, false))
+                    {
+                        onSelect(item);
+                        _filterText = "";
+                        clearText = "";
+                        ImGui.CloseCurrentPopup();
+                        Service.Save();
+                    }
+                }
+                
+                ImGui.EndChild();
+            }
+            ImGui.EndCombo();
+        }
+    }
+    
+    public static void DrawCheckboxTree(string treeName, ref bool enable, Action action, string helpText = "")
+    {
+        ImGui.Checkbox("", ref enable);
+        
+        if (helpText != string.Empty)
+        {
+            if (ImGui.IsItemHovered())
+                ImGui.SetTooltip(helpText);
+        }
+        
+        ImGui.SameLine();
+        if (ImGui.TreeNodeEx(treeName, ImGuiTreeNodeFlags.FramePadding))
+        {
+            ImGui.Spacing();
+            ImGui.Indent();
+            action();
+            ImGui.Unindent();
+            ImGui.Separator();
+            ImGui.TreePop();
+        }
+    }
+
+    public static void SpacingSeparator()
+    {
+        ImGui.Spacing();
+        ImGui.Separator();
+        ImGui.Spacing();
+    }
+}

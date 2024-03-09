@@ -1,349 +1,696 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
+using AutoHook.Classes;
+using AutoHook.Classes.AutoCasts;
 using AutoHook.Configurations;
-using AutoHook.Utils;
-using Dalamud.Game;
-using Dalamud.Logging;
-using Parser;
-using Item = Lumina.Excel.GeneratedSheets.Item;
-using AutoHook.Enums;
 using AutoHook.Data;
-using System.Collections.Generic;
+using AutoHook.Enums;
+using AutoHook.Resources.Localization;
+using AutoHook.SeFunctions;
+using AutoHook.Utils;
+using Dalamud.Hooking;
+using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
+using Lumina.Excel.GeneratedSheets;
 
-namespace AutoHook.FishTimer;
+namespace AutoHook;
 
 public class HookingManager : IDisposable
 {
-    private BaitConfig? _selectedPreset;
+    private static readonly HookPresets Presets = Service.Configuration.HookPresets;
 
-    private static readonly Configuration cfg = Service.Configuration;
+    private static double _lastTickMs = 200;
 
-    private readonly FishingParser Parser = new();
-    private CatchSteps LastStep = 0;
-    private FishingState LastState = FishingState.None;
-    private Stopwatch Timer = new();
+    private static double _debugValueLast = 3000;
+    private readonly Stopwatch _recastTimer = new();
 
-    public static string? LastCatch = null;
-    public static string? CurrentBait = null;
+    private readonly Stopwatch _timer = new();
+
+    private readonly Stopwatch _timerState = new();
+
+    private Hook<UpdateCatchDelegate>? _catchHook;
+
+    private FishingState _lastState = FishingState.None;
+    private FishingSteps _lastStep = 0;
+
+    private HookConfig? _currentHook;
+
+    //private FishConfig? _lastFishCatchCfg;
+    private BaitFishClass? _lastCatch;
+
+    private IntuitionStatus _intuitionStatus = IntuitionStatus.NotActive;
+    private SpectralCurrentStatus _spectralCurrentStatus = SpectralCurrentStatus.NotActive;
+
+    private delegate bool UseActionDelegate(IntPtr manager, ActionType actionType, uint actionId, GameObjectID targetId,
+        uint a4, uint a5,
+        uint a6, IntPtr a7);
+
+    private Hook<UseActionDelegate>? _useActionHook;
 
     public HookingManager()
     {
+        CreateDalamudHooks();
         Enable();
     }
 
-    public void Enable()
-    {  
-        SubscribeToParser();
-        Service.Framework.Update += OnFrameworkUpdate;
-    }
+    //public static BaitFishClass LastCatch { get; private set; } = new(@"-", -1);
 
-    private void SubscribeToParser()
-    {
-        Parser.Enable();
-        Parser.CaughtFish += OnCatch;
-        Parser.BeganFishing += OnBeganFishing;
-        Parser.BeganMooching += OnBeganMooch;
-    }
+    public static string CurrentBaitMooch { get; private set; } = @"-";
 
     public void Dispose()
     {
         Disable();
-        Parser.Dispose();
+
+        _catchHook?.Dispose();
+        _useActionHook?.Dispose();
     }
 
-    public void Disable()
+    private unsafe void CreateDalamudHooks()
     {
-        UnSubscribeToParser();
+        _catchHook = new UpdateFishCatch(Service.SigScanner).CreateHook(OnCatchUpdate);
+        var hookPtr = (IntPtr)ActionManager.MemberFunctionPointers.UseAction;
+        _useActionHook = Service.GameInteropProvider.HookFromAddress<UseActionDelegate>(hookPtr, OnUseAction);
+    }
+
+    private void Enable()
+    {
+        Service.Framework.Update += OnFrameworkUpdate;
+        _catchHook?.Enable();
+        _useActionHook?.Enable();
+    }
+
+    private void Disable()
+    {
         Service.Framework.Update -= OnFrameworkUpdate;
-    }
-    private void UnSubscribeToParser()
-    {
-        Parser.Disable();
-        Parser.CaughtFish -= OnCatch;
-        Parser.BeganFishing -= OnBeganFishing;
-        Parser.BeganMooching -= OnBeganMooch;
+        _useActionHook?.Disable();
+        _catchHook?.Disable();
     }
 
-    public static string GetCurrentBait()
+    private static string GetCurrentBait()
     {
-        var baitId = Service.CurrentBait.Current;
-        string baitName = MultiString.ParseSeStringLumina(Service.DataManager.GetExcelSheet<Item>()!.GetRow(baitId)?.Name);
+        var baitId = Service.EquipedBait.Current;
+        var baitName = MultiString.ParseSeStringLumina(Service.DataManager.GetExcelSheet<Item>()!.GetRow(baitId)?.Name);
         return baitName;
     }
 
     // The current config is updates two times: When we began fishing (to get the config based on the mooch/bait) and when we hooked the fish (in case the user updated their configs).
-    private void UpdateCurrentSetting()
+    private void UpdateCurrentPreset()
     {
-        ResetAFKTimer();
+        ResetAfkTimer();
 
-        _selectedPreset = GetPreset(CurrentBait);
+        // check if SelectedPreset has hook for the current bait
+        var customHook = _lastStep == FishingSteps.BeganMooching
+            ? Presets.SelectedPreset?.GetMoochByName(CurrentBaitMooch)
+            : Presets.SelectedPreset?.GetBaitByName(CurrentBaitMooch);
 
-        if (_selectedPreset == null)
-        {
-            BaitConfig defaultConfig;
+        var defaultHook = _lastStep == FishingSteps.BeganMooching
+            ? Presets.DefaultPreset.ListOfMooch.FirstOrDefault()
+            : Presets.DefaultPreset.ListOfBaits.FirstOrDefault();
 
-            if (LastStep == CatchSteps.BeganMooching)
-                defaultConfig = cfg.DefaultMoochConfig;
-            else
-                defaultConfig = cfg.DefaultCastConfig;
+        _currentHook = customHook?.Enabled ?? false ? customHook
+            : defaultHook?.Enabled ?? false ? defaultHook
+            : null;
 
-            if (defaultConfig.Enabled)
-                _selectedPreset = defaultConfig;
-        }
+        var presetName = customHook?.Enabled ?? false ? Presets.SelectedPreset?.PresetName ?? @"Custom"
+            : defaultHook?.Enabled ?? false ? Presets.DefaultPreset.PresetName
+            : @"";
 
-        else if (!_selectedPreset.Enabled)
-            _selectedPreset = null;
+        var autoCastName = Presets.SelectedPreset?.AutoCastsCfg.EnableAll ?? false ? Presets.SelectedPreset.PresetName
+            : Presets.DefaultPreset?.AutoCastsCfg.EnableAll ?? false ? Presets.DefaultPreset.PresetName
+            : "-";
 
-        if (_selectedPreset == null)
-            PluginLog.Debug("No config found. Not hooking");
-        else
-            PluginLog.Debug($"Preset Found: {cfg.CurrentPreset?.PresetName}, Bait: {_selectedPreset.BaitName}");
+        var extraCfg = Presets.SelectedPreset?.ExtraCfg.Enabled ?? false ? Presets.SelectedPreset.PresetName
+            : Presets.DefaultPreset?.ExtraCfg.Enabled ?? false ? Presets.DefaultPreset.PresetName
+            : "-";
+
+        Service.Status = _currentHook == null
+            ? @"-"
+            : @$"Hook Config: {_currentHook.BaitFish.Name}({presetName}) | AutoCast: {autoCastName} | Extra: {extraCfg}";
+
+        Service.PrintDebug(_currentHook == null
+            ? @$"[HookManager] No config found. Not hooking"
+            : @$"[HookManager] Config Found: {_currentHook.BaitFish.Name}, Preset: {presetName}");
     }
 
-    private static BaitConfig? GetPreset(string? baitName)
+    private AutoCastsConfig GetAutoCastCfg()
     {
-        return cfg.CurrentPreset?.ListOfBaits.FirstOrDefault(mooch => mooch.BaitName.ToLower().Equals(baitName?.ToLower()));
+        return Presets.SelectedPreset?.AutoCastsCfg.EnableAll ?? false
+            ? Presets.SelectedPreset.AutoCastsCfg
+            : Presets.DefaultPreset.AutoCastsCfg;
     }
 
-    private void OnBeganFishing()
+    private ExtraConfig GetExtraCfg()
     {
-        if (LastStep == CatchSteps.BeganFishing && LastState != FishingState.PoleReady)
+        return Presets.SelectedPreset?.ExtraCfg.Enabled ?? false
+            ? Presets.SelectedPreset.ExtraCfg
+            : Presets.DefaultPreset.ExtraCfg;
+    }
+
+    private FishConfig? GetLastCatchConfig()
+    {
+        if (_lastCatch == null) 
+            return null;
+
+        return Presets.SelectedPreset?.GetFishById(_lastCatch.Id) ?? Presets.DefaultPreset.GetFishById(_lastCatch.Id);
+    }
+
+    private void OnFrameworkUpdate(IFramework _)
+    {
+        var currentState = Service.EventFramework.FishingState;
+
+        if (!Service.Configuration.PluginEnabled || currentState == FishingState.None)
             return;
 
-        CurrentBait = GetCurrentBait();
-        Timer.Reset();
-        Timer.Start();
-        LastStep = CatchSteps.BeganFishing;
-        UpdateCurrentSetting();
-    }
-
-    private void OnBeganMooch()
-    {
-        if (LastStep == CatchSteps.BeganMooching && LastState != FishingState.PoleReady)
-            return;
-
-        CurrentBait = new string(LastCatch);
-        Timer.Reset();
-        Timer.Start();
-        //LastCatch = null;
-        LastStep = CatchSteps.BeganMooching;
-        UpdateCurrentSetting();
-    }
-
-    private void OnBite()
-    {
-        UpdateCurrentSetting();
-        LastStep = CatchSteps.FishBit;
-        Timer.Stop();
-
-        HookFish(Service.TugType?.Bite ?? BiteType.Unknown);
-    }
-
-    private void OnCatch(string fishName, uint fishId)
-    {
-        LastCatch = fishName;
-        CurrentBait = GetCurrentBait();
-
-        LastStep = CatchSteps.FishCaught;
-
-        // Check if should stop with the current bait/fish
-        if (_selectedPreset != null && _selectedPreset.StopAfterCaught)
+        if (currentState != FishingState.Quit && _lastStep == FishingSteps.Quitting)
         {
-            int total = FishCounter.Add(_selectedPreset.BaitName);
-
-            PluginLog.Debug($"{_selectedPreset.BaitName} caught. Total: {total} out of {_selectedPreset.StopAfterCaughtLimit}");
-
-            if (total >= _selectedPreset.StopAfterCaughtLimit)
+            if (PlayerResources.IsCastAvailable())
             {
-                LastStep = CatchSteps.Quitting;
+                PlayerResources.CastActionDelayed(IDs.Actions.Quit, ActionType.Action, @"Quit");
+                currentState = FishingState.Quit;
             }
-        }
-
-        // Check if should stop with another bait/fish
-        BaitConfig? CustomMoochCfg = GetPreset(LastCatch);
-        if (CustomMoochCfg != null && CustomMoochCfg.StopAfterCaught)
-        {
-            int total = FishCounter.Add(CustomMoochCfg.BaitName);
-
-            PluginLog.Debug($"{CustomMoochCfg.BaitName} caught. Total: {total} out of {CustomMoochCfg.StopAfterCaughtLimit}");
-
-            if (total >= CustomMoochCfg.StopAfterCaughtLimit)
-            {
-                LastStep = CatchSteps.Quitting;
-            }
-        }
-    }
-
-
-    private void OnFrameworkUpdate(Framework _)
-    {
-        var state = Service.EventFramework.FishingState;
-
-        if (!cfg.PluginEnabled || state == FishingState.None)
-            return;
-
-        if (state != FishingState.Quit && LastStep == CatchSteps.Quitting)
-        {
-            PlayerResources.CastActionDelayed(IDs.Actions.Quit);
-            state = FishingState.Quit;
         }
 
         //CheckState();
 
-        // FishBit in this case means that the fish was hooked, but it escaped. I might need to find a way to check if the fish was caught or not.
-        if (LastStep != CatchSteps.Quitting && state == FishingState.PoleReady && (LastStep == CatchSteps.FishBit || LastStep == CatchSteps.FishCaught || LastStep == CatchSteps.TimeOut))
-        {
+        if (_lastStep != FishingSteps.Quitting && currentState == FishingState.PoleReady &&
+            _lastStep == FishingSteps.FishCaught)
+            CheckStopCondition();
+
+        if (_lastStep != FishingSteps.Quitting && currentState == FishingState.PoleReady)
             UseAutoCasts();
-        }
 
-        //CheckState();
-        if (state == FishingState.Waiting2)
+        if (currentState == FishingState.Waiting2)
             CheckMaxTimeLimit();
 
-        if (LastState == state)
+        if (_lastState == currentState)
             return;
+        
+        if (currentState == FishingState.PoleReady)
+            Service.Status = "-";
+        
+        _lastState = currentState;
 
-        LastState = state;
-
-        switch (state)
+        switch (currentState)
         {
             case FishingState.PullPoleIn: // If a hook is manually used before a bite, dont use auto cast
-                if (LastStep == CatchSteps.BeganFishing || LastStep == CatchSteps.BeganFishing) LastStep = CatchSteps.None;
+                if (_lastStep is FishingSteps.BeganFishing or FishingSteps.BeganMooching)
+                    _lastStep = FishingSteps.None;
                 break;
             case FishingState.Bite:
-                if (LastStep != CatchSteps.FishBit) OnBite();
+                if (_lastStep != FishingSteps.FishBit) OnBite();
                 break;
             case FishingState.Quit:
                 OnFishingStop();
                 break;
         }
     }
-    private void OnFishingStop()
+
+    private void UseAutoCasts()
     {
-        LastStep = CatchSteps.None;
-        if (Timer.IsRunning)
+        // if _lastStep is FishBit but currentState is FishingState.PoleReady, it case means that the fish was hooked, but it escaped.
+        if (_lastStep is FishingSteps.None or FishingSteps.BeganFishing or FishingSteps.BeganMooching)
+            return;
+
+        if (!_recastTimer.IsRunning)
+            _recastTimer.Start();
+
+        // only try to auto cast every 500ms
+        if (!(_recastTimer.ElapsedMilliseconds > _lastTickMs + 500))
+            return;
+
+        _lastTickMs = _recastTimer.ElapsedMilliseconds;
+
+        if (!PlayerResources.IsCastAvailable())
+            return;
+
+        CheckExtraActions();
+
+        var acCfg = GetAutoCastCfg();
+
+        var cast = GetFishCaughActions() ?? GetNextAutoCast(acCfg);
+
+        if (cast != null)
+            PlayerResources.CastActionDelayed(cast.Id, cast.ActionType, cast.Name);
+        else
+            CastLineMoochOrRelease(acCfg);
+    }
+
+    private BaseActionCast? GetFishCaughActions()
+    {
+        var lastFishCatchCfg = GetLastCatchConfig();
+
+        if (lastFishCatchCfg == null || !lastFishCatchCfg.Enabled)
+            return null;
+
+        if (lastFishCatchCfg.IdenticalCast.IsAvailableToCast())
+            return lastFishCatchCfg.IdenticalCast;
+
+        if (lastFishCatchCfg.SurfaceSlap.IsAvailableToCast())
+            return lastFishCatchCfg.SurfaceSlap;
+
+        var count = FishingCounter.GetCount(lastFishCatchCfg.GetUniqueId());
+        if (_lastStep != FishingSteps.BaitSwapped && lastFishCatchCfg.SwapBait)
         {
-            Timer.Stop();
+            if (count == lastFishCatchCfg.SwapBaitCount &&
+                lastFishCatchCfg.BaitToSwap.Id != Service.EquipedBait.Current)
+            {
+                var result = Service.EquipedBait.ChangeBait(lastFishCatchCfg.BaitToSwap);
+
+                _lastStep |= FishingSteps.BaitSwapped; // one try per catch
+
+                if (result == CurrentBait.ChangeBaitReturn.Success)
+                {
+                    Service.PrintChat(@$"[Fish] Swapping bait to {lastFishCatchCfg.BaitToSwap.Name}");
+                    Service.Save();
+                }
+            }
         }
 
-        CurrentBait = "-";
+        if (_lastStep != FishingSteps.PresetSwapped && lastFishCatchCfg.SwapPresets)
+        {
+            if (count == lastFishCatchCfg.SwapPresetCount &&
+                lastFishCatchCfg.PresetToSwap != Presets.SelectedPreset?.PresetName)
+            {
+                var preset =
+                    Presets.CustomPresets.FirstOrDefault(preset => preset.PresetName == lastFishCatchCfg.PresetToSwap);
+                _lastStep |= FishingSteps.PresetSwapped; // one try per catch
 
-        FishCounter.Reset();
-        PlayerResources.ResetAutoCast();
+                if (preset != null)
+                {
+                    Presets.SelectedPreset = preset;
+                    Service.PrintChat(@$"[Fish] Swapping current preset to {lastFishCatchCfg.PresetToSwap}");
+                    Service.Save();
+                }
+                else
+                    Service.PrintChat(@$"Preset {lastFishCatchCfg.PresetToSwap} not found.");
+            }
+        }
+
+        return null;
     }
-    private unsafe void HookFish(BiteType bite)
+
+    private BaseActionCast? GetNextAutoCast(AutoCastsConfig acCfg)
     {
-        if (_selectedPreset == null)
+        if (!acCfg.EnableAll)
+            return null;
+
+        var autoActions = acCfg.GetAutoActions();
+
+        foreach (var action in autoActions.Where(action => action.IsAvailableToCast()))
+        {
+            return action;
+        }
+
+        return null;
+    }
+
+    private void CheckExtraActions()
+    {
+        if (_intuitionStatus == IntuitionStatus.NotActive)
+        {
+            if (!PlayerResources.HasStatus(IDs.Status.FishersIntuition))
+                return;
+
+            _intuitionStatus = IntuitionStatus.Active; // only one try
+
+            var extraCfg = GetExtraCfg();
+
+            if (extraCfg.SwapPresetIntuitionGain)
+            {
+                var preset =
+                    Presets.CustomPresets.FirstOrDefault(preset =>
+                        preset.PresetName == extraCfg.PresetToSwapIntuitionGain);
+
+                if (preset != null)
+                {
+                    Presets.SelectedPreset = preset;
+                    Service.PrintChat(@$"[Extra] Swapping current preset to {extraCfg.PresetToSwapIntuitionGain}");
+                    Service.Save();
+                }
+                else
+                    Service.PrintChat(@$"Preset {extraCfg.PresetToSwapIntuitionGain} not found.");
+            }
+
+            if (extraCfg.SwapBaitIntuitionGain)
+            {
+                var result = Service.EquipedBait.ChangeBait(extraCfg.BaitToSwapIntuitionGain);
+
+                if (result == CurrentBait.ChangeBaitReturn.Success)
+                {
+                    Service.PrintChat(@$"[Extra] Swapping bait to {extraCfg.BaitToSwapIntuitionGain.Name}");
+                    _lastStep |= FishingSteps.BaitSwapped; // one try per catch
+                    Service.Save();
+                }
+            }
+        }
+
+        if (_intuitionStatus == IntuitionStatus.Active)
+        {
+            if (PlayerResources.HasStatus(IDs.Status.FishersIntuition))
+                return;
+
+            _intuitionStatus = IntuitionStatus.NotActive; // only one try
+
+            var extraCfg = GetExtraCfg();
+
+            if (extraCfg.SwapPresetIntuitionLost)
+            {
+                var preset =
+                    Presets.CustomPresets.FirstOrDefault(preset =>
+                        preset.PresetName == extraCfg.PresetToSwapIntuitionLost);
+
+                if (preset != null)
+                {
+                    // one try per catch
+                    _lastStep |= FishingSteps.PresetSwapped;
+                    Presets.SelectedPreset = preset;
+                    Service.PrintChat(@$"[Extra] Swapping current preset to {extraCfg.PresetToSwapIntuitionLost}");
+                    Service.Save();
+                }
+                else
+                    Service.PrintChat(@$"Preset {extraCfg.PresetToSwapIntuitionLost} not found.");
+            }
+
+            if (extraCfg.SwapBaitIntuitionLost)
+            {
+                var result = Service.EquipedBait.ChangeBait(extraCfg.BaitToSwapIntuitionLost);
+
+                // one try per catch
+                _lastStep |= FishingSteps.BaitSwapped;
+                if (result == CurrentBait.ChangeBaitReturn.Success)
+                {
+                    Service.PrintChat(@$"[Extra] Swapping bait to {extraCfg.BaitToSwapIntuitionLost.Name}");
+                    Service.Save();
+                }
+            }
+        }
+
+        if (_spectralCurrentStatus == SpectralCurrentStatus.NotActive)
+        {
+            if (!PlayerResources.IsInActiveSpectralCurrent())
+                return;
+
+            _spectralCurrentStatus = SpectralCurrentStatus.Active; // only one try
+
+            var extraCfg = GetExtraCfg();
+
+            if (extraCfg.SwapPresetSpectralCurrentGain)
+            {
+                var preset =
+                    Presets.CustomPresets.FirstOrDefault(preset =>
+                        preset.PresetName == extraCfg.PresetToSwapSpectralCurrentGain);
+
+                if (preset != null)
+                {
+                    Presets.SelectedPreset = preset;
+                    Service.PrintChat(@$"[Extra] Swapping current preset to {extraCfg.PresetToSwapSpectralCurrentGain}");
+                    Service.Save();
+                }
+                else
+                    Service.PrintChat(@$"Preset {extraCfg.PresetToSwapSpectralCurrentGain} not found.");
+            }
+
+            if (extraCfg.SwapBaitSpectralCurrentGain)
+            {
+                var result = Service.EquipedBait.ChangeBait(extraCfg.BaitToSwapSpectralCurrentGain);
+
+                if (result == CurrentBait.ChangeBaitReturn.Success)
+                {
+                    Service.PrintChat(@$"[Extra] Swapping bait to {extraCfg.BaitToSwapSpectralCurrentGain.Name}");
+                    _lastStep |= FishingSteps.BaitSwapped; // one try per catch
+                    Service.Save();
+                }
+            }
+        }
+
+        if (_spectralCurrentStatus == SpectralCurrentStatus.Active)
+        {
+            if (PlayerResources.IsInActiveSpectralCurrent())
+                return;
+
+            _spectralCurrentStatus = SpectralCurrentStatus.NotActive; // only one try
+
+            var extraCfg = GetExtraCfg();
+
+            if (extraCfg.SwapPresetSpectralCurrentLost)
+            {
+                var preset =
+                    Presets.CustomPresets.FirstOrDefault(preset =>
+                        preset.PresetName == extraCfg.PresetToSwapSpectralCurrentLost);
+
+                if (preset != null)
+                {
+                    // one try per catch
+                    _lastStep |= FishingSteps.PresetSwapped;
+                    Presets.SelectedPreset = preset;
+                    Service.PrintChat(@$"[Extra] Swapping current preset to {extraCfg.SwapPresetSpectralCurrentLost}");
+                    Service.Save();
+                }
+                else
+                    Service.PrintChat(@$"Preset {extraCfg.SwapPresetSpectralCurrentLost} not found.");
+            }
+
+            if (extraCfg.SwapBaitSpectralCurrentLost)
+            {
+                var result = Service.EquipedBait.ChangeBait(extraCfg.BaitToSwapSpectralCurrentLost);
+
+                // one try per catch
+                _lastStep |= FishingSteps.BaitSwapped;
+                if (result == CurrentBait.ChangeBaitReturn.Success)
+                {
+                    Service.PrintChat(@$"[Extra] Swapping bait to {extraCfg.BaitToSwapSpectralCurrentLost.Name}");
+                    Service.Save();
+                }
+            }
+        }
+    }
+
+    private void CastLineMoochOrRelease(AutoCastsConfig acCfg)
+    {
+        var lastFishCatchCfg = GetLastCatchConfig();
+        
+        var blockMooch = lastFishCatchCfg is { Enabled: true, NeverMooch: true };
+
+        if (!blockMooch)
+        {
+            if (lastFishCatchCfg is { Enabled: true } && lastFishCatchCfg.Mooch.IsAvailableToCast())
+            {
+                PlayerResources.CastActionDelayed(lastFishCatchCfg.Mooch.Id, lastFishCatchCfg.Mooch.ActionType,
+                    UIStrings.Mooch);
+                return;
+            }
+
+            if (acCfg is { EnableAll: true } && acCfg.CastMooch.IsAvailableToCast())
+            {
+                PlayerResources.CastActionDelayed(acCfg.CastMooch.Id, acCfg.CastMooch.ActionType, UIStrings.Mooch);
+                return;
+            }
+        }
+
+        if (acCfg is { EnableAll: true } && acCfg.CastLine.IsAvailableToCast())
+        {
+            PlayerResources.CastActionDelayed(IDs.Actions.Cast, ActionType.Action, UIStrings.Cast_Line);
+            return;
+        }
+    }
+
+    private void CheckStopCondition()
+    {
+        var lastFishCatchCfg = GetLastCatchConfig();
+
+        if (lastFishCatchCfg?.StopAfterCaught ?? false)
+        {
+            var guid = lastFishCatchCfg.GetUniqueId();
+            var total = FishingCounter.GetCount(guid);
+
+            if (total >= lastFishCatchCfg.StopAfterCaughtLimit)
+            {
+                Service.PrintChat(string.Format(UIStrings.Caught_Limited_Reached_Chat_Message,
+                    @$"{lastFishCatchCfg.Fish.Name}: {lastFishCatchCfg.StopAfterCaughtLimit}"));
+
+                _lastStep = lastFishCatchCfg.StopFishingStep;
+                FishingCounter.Remove(guid);
+            }
+        }
+
+        if (_currentHook?.StopAfterCaught ?? false)
+        {
+            var guid = _currentHook.GetUniqueId();
+            var total = FishingCounter.GetCount(guid);
+
+            if (total >= _currentHook.StopAfterCaughtLimit)
+            {
+                Service.PrintChat(string.Format(UIStrings.Hooking_Limited_Reached_Chat_Message,
+                    @$"{_currentHook.BaitFish.Name}: {_currentHook.StopAfterCaughtLimit}"));
+
+                _lastStep = _currentHook.StopFishingStep;
+                FishingCounter.Remove(guid);
+            }
+        }
+    }
+
+    private void OnBeganFishing()
+    {
+        if (_lastStep == FishingSteps.BeganFishing && _lastState != FishingState.PoleReady)
+            return;
+
+        CurrentBaitMooch = GetCurrentBait();
+        _timer.Reset();
+        _timer.Start();
+        _lastStep = FishingSteps.BeganFishing;
+        UpdateCurrentPreset();
+    }
+
+    private void OnBeganMooch()
+    {
+        if (_lastStep == FishingSteps.BeganMooching && _lastState != FishingState.PoleReady)
+            return;
+
+        CurrentBaitMooch = new string(Service.LastCatch.Name);
+        _timer.Reset();
+        _timer.Start();
+        //LastCatch = null;
+        _lastStep = FishingSteps.BeganMooching;
+        UpdateCurrentPreset();
+    }
+
+    private void OnBite()
+    {
+        UpdateCurrentPreset();
+        _lastStep = FishingSteps.FishBit;
+        _timer.Stop();
+
+        HookFish(Service.TugType?.Bite ?? BiteType.Unknown);
+    }
+
+    private async void HookFish(BiteType bite)
+    {
+        var delay = new Random().Next(Service.Configuration.DelayBetweenHookMin,
+            Service.Configuration.DelayBetweenHookMax);
+        await Task.Delay(delay);
+
+        if (_currentHook == null)
             return;
 
         // Check if the minimum time has passed
         if (!CheckMinTimeLimit())
             return;
 
-        HookType? hook = null;
+        var hook = _currentHook.GetHook(bite);
 
-        if (PlayerResources.HasStatus(IDs.Status.IdenticalCast))
-        {
-            var IdenticalCast = GetPreset(LastCatch);
-            if (IdenticalCast != null)
-                hook = IdenticalCast.GetHookIgnoreEnable(bite);
-            else
-                hook = _selectedPreset.GetHook(bite);
-        }
-        else
-            hook = _selectedPreset.GetHook(bite);
-
-        if (hook == null || hook == HookType.None)
+        if (hook is null or HookType.None)
             return;
 
-        if (PlayerResources.ActionAvailable((uint)hook)) // Check if Powerful/Precision is available
-            PlayerResources.CastActionDelayed((uint)hook);
-        else // If not, use normal hook
-            PlayerResources.CastActionDelayed((uint)HookType.Normal);
-    }
-
-    private static double LastTickMS = 200;
-    private Stopwatch RecastTimer = new();
-    private void UseAutoCasts()
-    {
-        if (!RecastTimer.IsRunning)
-            RecastTimer.Start();
-
-        if (RecastTimer.ElapsedMilliseconds > LastTickMS + 200)
+        if (PlayerResources.ActionTypeAvailable((uint)hook)) // Check if Powerful/Precision is available
         {
-            LastTickMS = RecastTimer.ElapsedMilliseconds;
-
-            AutoCast? cast = null;
-
-            BaitConfig? CustomMoochCfg = GetPreset(LastCatch);
-
-            if (CustomMoochCfg != null)
-                cast = cfg.AutoCastsCfg.GetNextAutoCast(CustomMoochCfg);
-            else
-                cast = cfg.AutoCastsCfg.GetNextAutoCast(_selectedPreset);
-
-            if (cast != null)
-            {
-                PlayerResources.CastActionDelayed(cast.Id, cast.ActionType);
-            }
+            Service.PrintDebug(@$"[HookManager] Using {hook.ToString()} hook.");
+            PlayerResources.CastActionDelayed((uint)hook, ActionType.Action, @$"{hook.ToString()}");
+        }
+        else
+        {
+            Service.PrintDebug(@"[HookManager] Powerful/Precision not available. Using normal hook.");
+            PlayerResources.CastActionDelayed((uint)HookType.Normal, ActionType.Action,
+                @$"{HookType.Normal.ToString()}");
         }
     }
 
-    private void QuitFishing()
+    private void OnCatch(uint fishId, uint amount)
     {
-        PlayerResources.CastActionDelayed(IDs.Actions.Quit);
+        _lastCatch = PlayerResources.Fishes.FirstOrDefault(fish => fish.Id == fishId) ?? new BaitFishClass(@"-", -1);
+        var lastFishCatchCfg = GetLastCatchConfig();
+
+        Service.LastCatch = _lastCatch;
+
+        // Set the equipped bait back
+        CurrentBaitMooch = GetCurrentBait();
+
+        Service.PrintDebug(@$"[HookManager] Caught {_lastCatch.Name} (id {_lastCatch.Id})");
+
+        _lastStep = FishingSteps.FishCaught;
+
+        if (lastFishCatchCfg != null)
+        {
+            for (var i = 0; i < amount; i++)
+            {
+                FishingCounter.Add(lastFishCatchCfg.GetUniqueId());
+            }
+        }
+
+        if (_currentHook != null)
+            FishingCounter.Add(_currentHook.GetUniqueId());
+    }
+
+    private void OnFishingStop()
+    {
+        _lastStep = FishingSteps.None;
+
+        if (_timer.IsRunning)
+            _timer.Stop();
+
+        if (_recastTimer.IsRunning)
+            _recastTimer.Stop();
+
+        if (_timerState.IsRunning)
+            _timerState.Stop();
+
+        CurrentBaitMooch = @"-";
+        Service.Status = "-";
+
+        FishingCounter.Reset();
+
+        PlayerResources.CastActionNoDelay(IDs.Actions.Quit);
+        PlayerResources.DelayNextCast(0);
     }
 
     private bool CheckMinTimeLimit()
     {
-        if (_selectedPreset == null)
+        if (_currentHook == null)
             return true;
 
         double minTime;
 
-        if(_selectedPreset.UseChumTimer && PlayerResources.HasStatus(IDs.Status.Chum))
-        {
-            minTime = Math.Truncate(_selectedPreset.MinChumTimeDelay * 100) / 100;
-        }
-        else 
-            minTime = Math.Truncate(_selectedPreset.MinTimeDelay * 100) / 100;
+        if (_currentHook.UseChumTimer && PlayerResources.HasStatus(IDs.Status.Chum))
+            minTime = Math.Truncate(_currentHook.MinChumTimeDelay * 100) / 100;
+        else
+            minTime = Math.Truncate(_currentHook.MinTimeDelay * 100) / 100;
 
-        double timeElapsed = Math.Truncate((Timer.ElapsedMilliseconds / 1000.0) * 100) / 100;
-        if (minTime > 0 && timeElapsed < minTime)
-        {
-            LastStep = CatchSteps.TimeOut;
-            return false;
-        }
+        var timeElapsed = Math.Truncate(_timer.ElapsedMilliseconds / 1000.0 * 100) / 100;
 
-        return true;
+        if (!(minTime > 0) || !(timeElapsed < minTime))
+            return true;
+
+        _lastStep = FishingSteps.TimeOut;
+
+        return false;
     }
 
     private void CheckMaxTimeLimit()
     {
-        if (_selectedPreset == null)
+        if (_currentHook == null)
             return;
 
         double maxTime;
 
-        if (_selectedPreset.UseChumTimer && PlayerResources.HasStatus(IDs.Status.Chum))
-        {
-            PluginLog.Debug($"Using Chum timer");
-            maxTime = Math.Truncate(_selectedPreset.MaxChumTimeDelay * 100) / 100;
-        }
+        if (_currentHook.UseChumTimer && PlayerResources.HasStatus(IDs.Status.Chum))
+            maxTime = Math.Truncate(_currentHook.MaxChumTimeDelay * 100) / 100;
         else
-            maxTime = Math.Truncate(_selectedPreset.MaxTimeDelay * 100) / 100;
-        double currentTime = Math.Truncate((Timer.ElapsedMilliseconds / 1000.0) * 100) / 100;
+            maxTime = Math.Truncate(_currentHook.MaxTimeDelay * 100) / 100;
 
-        if (maxTime > 0 && currentTime > maxTime && LastStep != CatchSteps.TimeOut)
-        {
-            PluginLog.Debug("Timeout. Hooking fish.");
-            LastStep = CatchSteps.TimeOut;
-            PlayerResources.CastActionDelayed(IDs.Actions.Hook);
-        }
+        var currentTime = Math.Truncate(_timer.ElapsedMilliseconds / 1000.0 * 100) / 100;
+
+        if (!(maxTime > 0) || !(currentTime > maxTime) || _lastStep == FishingSteps.TimeOut)
+            return;
+
+        Service.PrintDebug(@"[HookManager] Timeout. Hooking fish.");
+        _lastStep = FishingSteps.TimeOut;
+        PlayerResources.CastActionDelayed(IDs.Actions.Hook, ActionType.Action, @"Hook");
     }
 
-    public static void ResetAFKTimer()
+    private static void ResetAfkTimer()
     {
         if (!InputUtil.TryFindGameWindow(out var windowHandle)) return;
 
@@ -352,43 +699,84 @@ public class HookingManager : IDisposable
         InputUtil.SendKeycode(windowHandle, 0x5C);
     }
 
-    private static double debugValueLast = 3000;
-    private Stopwatch Timerrr = new();
     private void CheckState()
     {
-        if (!Timerrr.IsRunning)
-            Timerrr.Start();
+        if (!_timerState.IsRunning)
+            _timerState.Start();
 
-        if (Timerrr.ElapsedMilliseconds > debugValueLast + 500)
-        {
-            debugValueLast = Timerrr.ElapsedMilliseconds;
-            PluginLog.Debug($"Fishing State: {Service.EventFramework.FishingState}, LastStep: {LastStep}");
-        }
+        if (!(_timerState.ElapsedMilliseconds > _debugValueLast + 500))
+            return;
+
+        _debugValueLast = _timerState.ElapsedMilliseconds;
+        Service.PrintDebug(
+            @$"[HookManager] Fishing State: {Service.EventFramework.FishingState}, LastStep: {_lastStep}");
     }
 
-    private static class FishCounter
+    private bool OnUseAction(IntPtr manager, ActionType actionType, uint actionId, GameObjectID targetId, uint a4,
+        uint a5, uint a6, IntPtr a7)
     {
-        static Dictionary<string, int> fishCount = new();
-
-        public static int Add(string fishName)
+        try
         {
-            if (!fishCount.ContainsKey(fishName))
-                fishCount.Add(fishName, 0);
-            fishCount[fishName]++;
-
-            return GetCount(fishName);
+            if (actionType == ActionType.Action)
+            {
+                switch (actionId)
+                {
+                    case IDs.Actions.Cast:
+                        if (PlayerResources.ActionTypeAvailable(actionId)) OnBeganFishing();
+                        break;
+                    case IDs.Actions.Mooch:
+                    case IDs.Actions.Mooch2:
+                        if (PlayerResources.ActionTypeAvailable(actionId)) OnBeganMooch();
+                        break;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Service.PrintDebug(@$"[HookManager] Error: {e.Message}");
         }
 
-        public static int GetCount(string fishName)
+        return _useActionHook!.Original(manager, actionType, actionId, targetId, a4, a5, a6, a7);
+    }
+
+    private void OnCatchUpdate(IntPtr module, uint fishId, bool large, ushort size, byte amount, byte level, byte unk7,
+        byte unk8, byte unk9, byte unk10, byte unk11, byte unk12)
+    {
+        _catchHook!.Original(module, fishId, large, size, amount, level, unk7, unk8, unk9, unk10, unk11, unk12);
+
+        // Check against collectibles.
+        if (fishId > 500000)
+            fishId -= 500000;
+
+        OnCatch(fishId, amount);
+    }
+
+    public static class FishingCounter
+    {
+        private static Dictionary<Guid, int> _fishCount = new();
+
+        public static int Add(Guid guid)
         {
-            if (!fishCount.ContainsKey(fishName))
-                return 0;
-            return fishCount[fishName];
+            _fishCount.TryAdd(guid, 0);
+            _fishCount[guid]++;
+
+            return GetCount(guid);
+        }
+
+        public static int GetCount(Guid fishName)
+        {
+            return !_fishCount.ContainsKey(fishName) ? 0 : _fishCount[fishName];
+        }
+
+        public static void Remove(Guid fishName)
+        {
+            if (_fishCount.ContainsKey(fishName))
+                _fishCount.Remove(fishName);
         }
 
         public static void Reset()
         {
-            fishCount = new();
+            _fishCount = new Dictionary<Guid, int>();
         }
     }
 }

@@ -4,11 +4,11 @@
   "Punchline": "Makes fishing less (or more) boring",
   "Description": "天才妹妹帮你钓鱼",
   "InternalName": "AutoHook",
-  "RepoUrl": "https://github.com/InitialDet/AutoHook",
+  "RepoUrl": "https://puni.sh/plugin/AutoHook",
   "ApplicableVersion": "any",
   "Tags": [ "Gathering", "Fishing" ],
-  "DalamudApiLevel": 8,
+  "DalamudApiLevel": 9,
   "AcceptsFeedback": false,
-  "IconUrl": "https://raw.githubusercontent.com/InitialDet/AutoHook/main/AutoHook/images/icon.png",
+  "IconUrl": "https://s3.puni.sh/media/plugin/47/icon-k1slevjorpo.png",
   "Changelog": "Click the new Changelog button to see whats new"
 }

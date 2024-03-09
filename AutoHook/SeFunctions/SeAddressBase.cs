@@ -1,6 +1,5 @@
 ﻿using System;
 using Dalamud.Game;
-using Dalamud.Logging;
 
 namespace AutoHook.SeFunctions
 {
@@ -8,7 +7,7 @@ namespace AutoHook.SeFunctions
     {
         public readonly IntPtr Address;
 
-        public SeAddressBase(SigScanner sigScanner, string signature, int offset = 0)
+        public SeAddressBase(ISigScanner sigScanner, string signature, int offset = 0)
         {
             Address = sigScanner.GetStaticAddressFromSig(signature);
             if (Address != IntPtr.Zero)

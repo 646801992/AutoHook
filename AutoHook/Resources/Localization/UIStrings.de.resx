@@ -1,0 +1,868 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="DrawHeader_Testing" xml:space="preserve">
+    <value>Test</value>
+  </data>
+  <data name="default" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="DrawImportExport_Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="ImportStackFromClipboard" xml:space="preserve">
+    <value>Stack aus der Zwischenablage importieren.</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>Importieren</value>
+  </data>
+  <data name="PresetName" xml:space="preserve">
+    <value>Preset-Name</value>
+  </data>
+  <data name="ImportThisPreset" xml:space="preserve">
+    <value>Das Preset importieren?</value>
+  </data>
+  <data name="AutoMooch" xml:space="preserve">
+    <value>Auto-Naturköder</value>
+  </data>
+  <data name="AddLastCatch" xml:space="preserve">
+    <value>Letzten Fang hinzufügen:</value>
+  </data>
+  <data name="ExportPresetToClipboard" xml:space="preserve">
+    <value>Preset in Zwischenablage exportieren.</value>
+  </data>
+  <data name="PresetExportedToTheClipboard" xml:space="preserve">
+    <value>Preset in Zwischenablage exportiert</value>
+  </data>
+  <data name="APresetWithTheSameNameAlreadyExists" xml:space="preserve">
+    <value>Ein Preset mit demselben Namen existiert bereits</value>
+  </data>
+  <data name="PresetAlreadyExist" xml:space="preserve">
+    <value>Ein Preset mit demselben Namen existiert bereits</value>
+  </data>
+  <data name="CurrentBaitMooch" xml:space="preserve">
+    <value>Aktueller Köder/Naturköder:</value>
+  </data>
+  <data name="AddCurrentBaitMooch" xml:space="preserve">
+    <value>Aktuellen Köder/Natürköder hinzufügen</value>
+  </data>
+  <data name="TabPresets_DrawHeader_IsEnabledByDefault" xml:space="preserve">
+    <value>Ist standardmäßig aktiv, wenn ein neuer Köder/Naturköder hinzugefügt wird</value>
+  </data>
+  <data name="TabPresets_DrawHeader_CorrectlyEditTheBaitMoochName" xml:space="preserve">
+    <value>Stelle sicher, dass der Köder-/Naturködername wie im Spiel angezeigt angegeben ist (z.B.: Universalköder)</value>
+  </data>
+  <data name="NewBaitMooch" xml:space="preserve">
+    <value>Neuer Köder/Naturköder</value>
+  </data>
+  <data name="EditMe" xml:space="preserve">
+    <value>EditMe</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Hinzufügen</value>
+  </data>
+  <data name="HoldShiftToDelete" xml:space="preserve">
+    <value>Umschalttaste gedrückt halten zum Löschen.</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="RightClickToRename" xml:space="preserve">
+    <value>Rechtklicken zum Umbenennen</value>
+  </data>
+  <data name="TabPresets_DrawHeader_EditPresetNamePressEnterToConfirm" xml:space="preserve">
+    <value>Preset-Namen ändern (Enter drücken zum Bestätigen)</value>
+  </data>
+  <data name="HookPresets" xml:space="preserve">
+    <value>Angel-Presets</value>
+  </data>
+  <data name="AddNewPreset" xml:space="preserve">
+    <value>Neues Preset hinzufügen</value>
+  </data>
+  <data name="TabPresets_DrawHeader_TabDescription" xml:space="preserve">
+    <value>Here you can customize which hook to use based on the current bait or mooch.
+If a bait/mooch is not specified, the Default Preset will be used instead.</value>
+  </data>
+  <data name="TabPresets_DrawHeader_NewTabDescription" xml:space="preserve">
+    <value>Here you can customize which hook to use based on the current bait or mooch.
+If a bait/mooch is not specified, the Default Preset will be used instead.</value>
+  </data>
+  <data name="NewPreset" xml:space="preserve">
+    <value>Neues Preset</value>
+  </data>
+  <data name="TabNameCustomPresets" xml:space="preserve">
+    <value>Benutzerdefinierte Presets</value>
+  </data>
+  <data name="TabNameGPConfig" xml:space="preserve">
+    <value>SP Einst.</value>
+  </data>
+  <data name="TabGPConfig_TabDescription" xml:space="preserve">
+    <value>Hier kannst du die SP-Grenzwerte für Aktionen und Items festlegen, die von der AutoCast-Funktion verwendet werden.</value>
+  </data>
+  <data name="GP" xml:space="preserve">
+    <value>SP</value>
+  </data>
+  <data name="Above" xml:space="preserve">
+    <value>Über</value>
+  </data>
+  <data name="Below" xml:space="preserve">
+    <value>Unter</value>
+  </data>
+  <data name="WillBeUsedWhenYourGPIsEqualOr" xml:space="preserve">
+    <value>wird verwendet, wenn deine SP gleich oder</value>
+    <comment>Action will be used when your GP is Equal or Above/Below</comment>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="TabnameGeneral" xml:space="preserve">
+    <value>Allgemein</value>
+  </data>
+  <data name="DrawHeader_GeneralSettings" xml:space="preserve">
+    <value>Allgemeine Einstellungen</value>
+  </data>
+  <data name="DrawHeader_CheckChangelog" xml:space="preserve">
+    <value>Überprüfe´die neuen Änderungen unten im Changelog</value>
+  </data>
+  <data name="DrawHeader_ClickToReportAnIssue" xml:space="preserve">
+    <value>Hier klicken, um ein Problem zu melden oder einen Vorschlag zu machen</value>
+  </data>
+  <data name="UseDefaultCast" xml:space="preserve">
+    <value>Standard-Angeleinstellung verwenden</value>
+  </data>
+  <data name="UseDefaultMooch" xml:space="preserve">
+    <value>Standard Naturköder verwenden</value>
+  </data>
+  <data name="DefaultHookingBehavior" xml:space="preserve">
+    <value>Das ist das Standardverhalten für den Anschlag, wenn kein benutzerdefiniertes Preset gefunden wurde.</value>
+  </data>
+  <data name="DefaultMoochingBehavior" xml:space="preserve">
+    <value>Dies ist das Standardverhalten für Naturköder, wenn kein Preset gefunden wird.</value>
+  </data>
+  <data name="Changelog" xml:space="preserve">
+    <value>Changelog</value>
+  </data>
+  <data name="DefaultCast" xml:space="preserve">
+    <value>Standard-Angeln</value>
+  </data>
+  <data name="DefaultMooch" xml:space="preserve">
+    <value>Standard-Naturköder</value>
+  </data>
+  <data name="HookWeakExclamation" xml:space="preserve">
+    <value>Schwacher Anschlag (!)</value>
+  </data>
+  <data name="HookStrongExclamation" xml:space="preserve">
+    <value>Starker Anschlag (!!)</value>
+  </data>
+  <data name="HookLegendaryExclamation" xml:space="preserve">
+    <value>Legendärer Anschlag (!!!)</value>
+  </data>
+  <data name="HookWillBeUsedIfPatienceIsNotUp" xml:space="preserve">
+    <value>"Anschlag" wird verwendet, wenn Geduld nicht aktiv ist</value>
+  </data>
+  <data name="PrecisionHookset" xml:space="preserve">
+    <value>Präziser Anschlag</value>
+  </data>
+  <data name="PowerfulHookset" xml:space="preserve">
+    <value>Fester Anschlag</value>
+  </data>
+  <data name="MoochBaitName" xml:space="preserve">
+    <value>Naturköder-/Ködername</value>
+  </data>
+  <data name="BaitAlreadyExists" xml:space="preserve">
+    <value>Köder existiert bereits</value>
+  </data>
+  <data name="MaxWait" xml:space="preserve">
+    <value>Max. Wartezeit</value>
+    <comment>Maximum time to wait</comment>
+  </data>
+  <data name="HelpMarkerMaxWaitTimer" xml:space="preserve">
+    <value>Anschlag wird verwendet, wenn die angegebene Zeit verstrichen ist.
+Min. Wartezeit: 2s (aufgrund des Animationslocks)
+
+Null (0) setzen zum Deaktivieren und nicht kleiner einstellen, als Min. Wartezeit</value>
+  </data>
+  <data name="MinWait" xml:space="preserve">
+    <value>Min. Wartezeit</value>
+  </data>
+  <data name="HelpMarkerMinWaitTimer" xml:space="preserve">
+    <value>Anschlag wird NICHT verwendet bevor die Min. Wartezeit verstrichen ist.
+
+Bsp: Setzt du die Zeit auf 14 und etwas beißt nach 8 Sekunden, wird der Fisch nicht gehakt
+
+Null (0) setzen zum Deaktivieren</value>
+  </data>
+  <data name="StopFishingAfter" xml:space="preserve">
+    <value>Fischen anhalten nach...</value>
+  </data>
+  <data name="StopFishing" xml:space="preserve">
+    <value>Fischen anhalten</value>
+  </data>
+  <data name="AfterBeingCaught" xml:space="preserve">
+    <value>Nachdem ... gefangen wurden</value>
+  </data>
+  <data name="AfterBeingCaughtDescription" xml:space="preserve">
+    <value>- Wenn es sich um einen Köder handelt: stoppt das Fischen nachdem Fangen von X Fischen
+- Wenn es sich um einen Fisch handelt: stoppt das Fischen nachdem X Fische davon gefangen wurde</value>
+  </data>
+  <data name="TimeS" xml:space="preserve">
+    <value>-mal</value>
+    <comment>Quantity, example: 5 Time(s) </comment>
+  </data>
+  <data name="SurfaceSlapIdenticalCast" xml:space="preserve">
+    <value>Bunte Gewässer &amp; Stetes Angeln</value>
+  </data>
+  <data name="OverridesIdenticalCast" xml:space="preserve">
+    <value>Überschreibt Stetes Angeln</value>
+  </data>
+  <data name="OverridesSurfaceSlap" xml:space="preserve">
+    <value>Überschreibt Bunte Gewässer</value>
+  </data>
+  <data name="UseSurfaceSlap" xml:space="preserve">
+    <value>Bunte Gewässer verwenden</value>
+  </data>
+  <data name="UseIdenticalCast" xml:space="preserve">
+    <value>Stetes Angeln verwenden</value>
+  </data>
+  <data name="UseMoochII" xml:space="preserve">
+    <value>Naturköder II verwenden</value>
+  </data>
+  <data name="OnlyUseWhenFisherSIntutionIsActive" xml:space="preserve">
+    <value>Nur verwenden, wenn Fischer-Intuition aktiv ist</value>
+  </data>
+  <data name="AutoMoochPresetDescription" xml:space="preserve">
+    <value>- Wenn es sich um einen Köder handelt (Bsp: Universalködere): Für alle gefangen Fische wir Naturköder verwendet
+- Wenn es sich um einen Fisch/Naturköder handelt (Ex: Hafenhering): Es wird Naturköder verwendet
+- Wenn diese Option deaktiviert ist, wird für diesen Fisch Naturköder NICHT verwendet, auch wenn Auto-Naturköder im allgemeinen Tab aktiviert ist</value>
+  </data>
+  <data name="AutoMoochPresetHelpMarker" xml:space="preserve">
+    <value>Diese Einstellung hat Priorität vor Autoauswurf der Leine</value>
+  </data>
+  <data name="FisherSIntuitionSettings" xml:space="preserve">
+    <value>Fischer-Intuition-Einstellung</value>
+  </data>
+  <data name="FisherSIntuitionSettingsHelpMarker" xml:space="preserve">
+    <value>Benutzerdefinierte Anschläge verwenden wenn Fischer-Intuition aktiv ist</value>
+  </data>
+  <data name="HoldShiftBothDHTH" xml:space="preserve">
+    <value>Umschalttaste halten um Doppelhaken und Tripelhaken auszuwählen (nicht empfohlen)</value>
+  </data>
+  <data name="UseDoubleHookIfGp400" xml:space="preserve">
+    <value>Doppelhaken verwenden (wenn SP &gt; 400)</value>
+  </data>
+  <data name="UseTripleHookIfGp700" xml:space="preserve">
+    <value>Tripelhaken verwenden (wenn SP &gt; 700)</value>
+  </data>
+  <data name="UseWhenPatienceIsActiveNotRecommended" xml:space="preserve">
+    <value>Verwenden, wenn Geduld aktiv ist (nicht empfohlen)</value>
+  </data>
+  <data name="DHTHPatienceHelpMarker" xml:space="preserve">
+    <value>Wichtig!!!
+
+Wenn deaktiviert, werden Präziser/Fester Anschlag stattdessen verwenden, wenn Geduld aktiv ist.</value>
+  </data>
+  <data name="LetTheFishEscape" xml:space="preserve">
+    <value>Den Fisch entkommen lassen, wenn SP unter dem benötigten Wert sind</value>
+  </data>
+  <data name="OnlyUseWhenIdenticalCastIsActive" xml:space="preserve">
+    <value>Nur verwenden, wenn Stetes Angeln aktiv ist</value>
+  </data>
+  <data name="DoubleTripleHookSettings" xml:space="preserve">
+    <value>Doppel-/Tripelhaken Einst.</value>
+  </data>
+  <data name="EnabledConfigArrow" xml:space="preserve">
+    <value>Aktive Config &gt;</value>
+  </data>
+  <data name="EnabledConfigArrowhelpMarker" xml:space="preserve">
+    <value>Wichtig!!!
+
+Wenn deaktiviert, wird der Fisch NICHT angeschlagen oder als Naturköder verwendet.
+Um das Standardverhalten (Allgemeiner Tab) zu verwenden, lösche bitte diese Einstellung.</value>
+  </data>
+  <data name="ChumTimer" xml:space="preserve">
+    <value>Streuköder-Timer</value>
+  </data>
+  <data name="EnableChumTimers" xml:space="preserve">
+    <value>Streuköder-Timer aktivieren</value>
+  </data>
+  <data name="EnableChumTimersHelpMarker" xml:space="preserve">
+    <value>Min/Max-Wartezeiten aktivieren, wenn unter dem Effekt von Streuköder</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>Aktivieren</value>
+  </data>
+  <data name="TabNameAutoGig" xml:space="preserve">
+    <value>Auto-Harpunieren</value>
+  </data>
+  <data name="TabAutoGigDescription" xml:space="preserve">
+    <value>Dies ist eine experimentelle Funktion und kann dazu führen, dass der Fisch entkommt. Sollten zu viele Fische entkommen, kannst du versuchen die Fenstergröße des Speerfischen-Fensters anzupassen</value>
+  </data>
+  <data name="EnableAutoGig" xml:space="preserve">
+    <value>Auto-Harpunieren verwenden</value>
+  </data>
+  <data name="HideOverlayDuringSpearfishing" xml:space="preserve">
+    <value>Overlay beim Speerfischen ausblenden</value>
+  </data>
+  <data name="AutoGigHideOverlayHelpMarker" xml:space="preserve">
+    <value>Es wird nur ausgeblendet, wenn die Auto-Harpunieren-Option aktiv ist</value>
+  </data>
+  <data name="DrawFishHitbox" xml:space="preserve">
+    <value>Fisch-Hitbox anzeigen</value>
+  </data>
+  <data name="DrawFishHitboxHelpMarker" xml:space="preserve">
+    <value>Die Hitbox ist nur für Fische mit der angegebenen Größe und Geschwindigkeit verfügbar</value>
+  </data>
+  <data name="DrawGigHitbox" xml:space="preserve">
+    <value>Hitbox fürs Harpunieren anzeigen</value>
+  </data>
+  <data name="SelectTheSizeAndSpeed" xml:space="preserve">
+    <value>Wähle die Größe und Geschwindigkeit des gewollten Fisches (das Gatherbuddy-Overlay fürs Speerfischen hilft hier)</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Größe</value>
+  </data>
+  <data name="Speed" xml:space="preserve">
+    <value>Geschwindigkeit</value>
+  </data>
+  <data name="AutoCastCordialPriority" xml:space="preserve">
+    <value>Priorität ändern: Verwässerter Kräutertrunk &gt; Kräutertrunk &gt; Super-Kräutertrunk</value>
+  </data>
+  <data name="AutoCastCordialPriorityHelpMarker" xml:space="preserve">
+    <value>Falls kein Kräutertrunk vorhanden ist, wird stattdessen ein Super-Kräutertrunk verwendet</value>
+  </data>
+  <data name="AutoCastUseCordial" xml:space="preserve">
+    <value>Kräutertrunk verwenden (Super-Kräutertrunk als erstes)</value>
+  </data>
+  <data name="AutoCastUseCordialHelpMarker" xml:space="preserve">
+    <value>Falls kein Super-Kräutertrunk vorhanden ist, wird stattdessen ein Kräutertrunk verwendet</value>
+  </data>
+  <data name="AutoCastUseFishEyes" xml:space="preserve">
+    <value>Fischaugen verwenden</value>
+  </data>
+  <data name="CancelsCurrentMooch" xml:space="preserve">
+    <value>Bricht Naturköder ab</value>
+  </data>
+  <data name="AutoCastUseChum" xml:space="preserve">
+    <value>Streuköder verwenden</value>
+  </data>
+  <data name="AutoCastExtraOptionPrizeCatch" xml:space="preserve">
+    <value>Nur verwenden, wenn Naturköder II NICHT verfügbar ist - LIES &gt;&gt;&gt;</value>
+  </data>
+  <data name="ExtraOptionPrizeCatchHelpMarker" xml:space="preserve">
+    <value>&gt;Stellen Sie sicher, dass 'Naturköder II verwenden' aktiviert ist, da es andernfalls nicht funktioniert&lt;
+Dies könnte 100SP einsparen, falls nur auf Naturköder abgezielt wird</value>
+  </data>
+  <data name="Test" xml:space="preserve">
+    <value>.</value>
+  </data>
+  <data name="Enable_AutoHook" xml:space="preserve">
+    <value>AutoHook aktivieren</value>
+  </data>
+  <data name="Plugin_Enabled" xml:space="preserve">
+    <value>Plugin aktiviert</value>
+  </data>
+  <data name="Plugin_Disabled" xml:space="preserve">
+    <value>Plugin deaktiviert</value>
+  </data>
+  <data name="Plugin_Name_Settings" xml:space="preserve">
+    <value>{0} Einstellungen</value>
+  </data>
+  <data name="PluginUi_Draw_Enables_Disables" xml:space="preserve">
+    <value>Aktiviert/Deaktiviert das Plugin</value>
+  </data>
+  <data name="Using_Chum_Timer" xml:space="preserve">
+    <value>Streuköder verwenden</value>
+  </data>
+  <data name="Disables_AutoHook" xml:space="preserve">
+    <value>Deaktiviert AutoHook</value>
+  </data>
+  <data name="AutoHook_Disabled" xml:space="preserve">
+    <value>AutoHook deaktiviert</value>
+  </data>
+  <data name="AutoHook_Enabled" xml:space="preserve">
+    <value>AutoHook aktiviert</value>
+  </data>
+  <data name="Enables_AutoHook" xml:space="preserve">
+    <value>Aktiviert AutoHook</value>
+  </data>
+  <data name="Opens_Config_Window" xml:space="preserve">
+    <value>Öffnet Config-Fenster</value>
+  </data>
+  <data name="TabAutoCasts_When_Stack_Equals" xml:space="preserve">
+    <value>Wenn Stacks = </value>
+  </data>
+  <data name="Use_Prize_Catch" xml:space="preserve">
+    <value>Fetter Fang verwenden</value>
+  </data>
+  <data name="Use_Prize_Catch_HelpText" xml:space="preserve">
+    <value>Bricht aktuellen Naturköder ab. Geduld und Fischfinesse werden nicht verwendet wenn Fetter Fang aktiv ist</value>
+  </data>
+  <data name="Toggles_AutoHook_On_Off" xml:space="preserve">
+    <value>Schaltet AutoHook an/aus</value>
+  </data>
+  <data name="Triple_Hook" xml:space="preserve">
+    <value>Tripelhaken</value>
+  </data>
+  <data name="Watered_Cordial" xml:space="preserve">
+    <value>Verwässerter Kräutertrank</value>
+  </data>
+  <data name="Cordial" xml:space="preserve">
+    <value>Kräutertrank</value>
+  </data>
+  <data name="HQ_Cordial" xml:space="preserve">
+    <value>HQ Kräutertrank</value>
+  </data>
+  <data name="HQ_Watered_Cordial" xml:space="preserve">
+    <value>HQ Verwässerter Kräutertrank</value>
+  </data>
+  <data name="Double_Hook" xml:space="preserve">
+    <value>Doppelhaken</value>
+  </data>
+  <data name="Patience_II" xml:space="preserve">
+    <value>Geduld II</value>
+  </data>
+  <data name="Hi_Cordial" xml:space="preserve">
+    <value>Super-Kräutertrank</value>
+  </data>
+  <data name="Patience_I" xml:space="preserve">
+    <value>Geduld</value>
+  </data>
+  <data name="Prize_Catch" xml:space="preserve">
+    <value>Fetter Fang</value>
+  </data>
+  <data name="Surface_Slap" xml:space="preserve">
+    <value>Buntes Gewässer</value>
+  </data>
+  <data name="Identical_Cast" xml:space="preserve">
+    <value>Stetes Angeln</value>
+  </data>
+  <data name="Fish_Eyes" xml:space="preserve">
+    <value>Fischaugen</value>
+  </data>
+  <data name="Chum" xml:space="preserve">
+    <value>Streuköder</value>
+  </data>
+  <data name="Thaliaks_Favor" xml:space="preserve">
+    <value>Thaliaks Huld</value>
+  </data>
+  <data name="MakeShift_Bait" xml:space="preserve">
+    <value>Fischfinesse</value>
+  </data>
+  <data name="BaitName_Default" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="DecompressString_Invalid_Import" xml:space="preserve">
+    <value>Ungültiger Import.</value>
+  </data>
+  <data name="New_Preset" xml:space="preserve">
+    <value>Neues Preset</value>
+  </data>
+  <data name="Auto_Casts" xml:space="preserve">
+    <value>Auto-Angeln</value>
+  </data>
+  <data name="TabAutoCasts_DrawAutoCast_HelpText" xml:space="preserve">
+    <value>Angeln (FSH-Aktion) wird verwendet, nachdem ein Fisch gebissen hat
+
+WICHTIG!!!
+Wenn Auto-Naturköder (Globales oder benutzerdefiniertes Preset) nicht aktiv ist, wird die Leine normal ausgeworfen, und du verlierst die Möglichkeit Naturköder zu verwenden (falls verfügbar)</value>
+  </data>
+  <data name="Global_Auto_Cast_Line" xml:space="preserve">
+    <value>Globaler Autoauswurf der Leine</value>
+  </data>
+  <data name="Use_Thaliaks_Favor" xml:space="preserve">
+    <value>Thaliaks Huld verwenden</value>
+  </data>
+  <data name="Use_Natures_Bounty" xml:space="preserve">
+    <value>Großes Füllhorn verwenden</value>
+  </data>
+  <data name="Enable_AutoGig" xml:space="preserve">
+    <value>Auto-Harpunieren</value>
+  </data>
+  <data name="Hitbox" xml:space="preserve">
+    <value>Hitbox</value>
+  </data>
+  <data name="Use_Makeshift_Bait" xml:space="preserve">
+    <value>Fischfinesse verwenden</value>
+  </data>
+  <data name="TabAutoCasts_DrawMakeShiftBait_HelpText" xml:space="preserve">
+    <value>Möglicher Konflikt mit Auto-Thaliaks-Huld</value>
+  </data>
+  <data name="TabAutoCasts_DrawExtraOptionsThaliaksFavor_" xml:space="preserve">
+    <value>Wenn Stacks =</value>
+  </data>
+  <data name="TabAutoCasts_DrawThaliaksFavor_HelpText" xml:space="preserve">
+    <value>Möglicher Konflikt mit Auto-Fischfinesse</value>
+  </data>
+  <data name="Use_Patience_I_II" xml:space="preserve">
+    <value>Geduld/Geduld II verwenden</value>
+  </data>
+  <data name="TabAutoCasts_DrawPatience_HelpText" xml:space="preserve">
+    <value>Geduld I/II wird verwendet, wenn die aktuellen SP gleich (oder größer) den Aktions-Kosten +20 sind (Bsp: 220 für I, 580 für II). Das verhindert, dass nicht genug SP für die Anschläge verfügbar sind</value>
+  </data>
+  <data name="TabAutoCasts_DrawExtraOptionsPatience" xml:space="preserve">
+    <value>Verwenden, wenn Fischsfinesse aktiv ist</value>
+  </data>
+  <data name="Enable_Auto_Casts" xml:space="preserve">
+    <value>Auto-Angeln aktivieren</value>
+  </data>
+  <data name="Dont_Cancel_Mooch" xml:space="preserve">
+    <value>Naturköder nicht verwerfen</value>
+  </data>
+  <data name="TabAutoCasts_DrawHeader_HelpText" xml:space="preserve">
+    <value>Kommandos die Naturköder abbrechen werden nicht verwendet (z.B. Streuköder, Fischaufen, Fetter Fang usw.)</value>
+  </data>
+  <data name="TabAutoCasts_DrawExtraOptionsAutoMooch_Extra_Only_Active" xml:space="preserve">
+    <value>Nur verwenden, wenn Fischer-Intuition aktiv ist</value>
+  </data>
+  <data name="Use_Mooch_II" xml:space="preserve">
+    <value>Naturköder II verwenden</value>
+  </data>
+  <data name="Global_Auto_Mooch" xml:space="preserve">
+    <value>Globaler Auto-Naturköder</value>
+  </data>
+  <data name="TabAutoCasts_DrawHeader_Guide_Collectables" xml:space="preserve">
+    <value>Guide: Wie man Sammlerstücke automatisch annimmt</value>
+  </data>
+  <data name="TabAutoCasts_DrawAutoMooch_HelpText" xml:space="preserve">
+    <value>Diese Einstellung hat Priorität vor Autoauswurf der Leine
+
+Möchtest du Auto-Naturköder für einen spezifischen Fisch verwenden, und andere ignorieren, musst du die Einstellung deaktivieren und ein benutzerdefiniertes Preset anlegen.</value>
+  </data>
+  <data name="Support_me_on_Ko_fi" xml:space="preserve">
+    <value>Unterstütze mich auf Ko-fi</value>
+  </data>
+  <data name="Complete" xml:space="preserve">
+    <value>Vollständig</value>
+  </data>
+  <data name="Incomplete" xml:space="preserve">
+    <value>Unvollständig</value>
+  </data>
+  <data name="AutoHook" xml:space="preserve">
+    <value>AutoHook</value>
+  </data>
+  <data name="PluginUi_Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="TabGeneral_DrawHeader_Localization_Help" xml:space="preserve">
+    <value>Help with the plugin localization (Crowdin)</value>
+  </data>
+  <data name="Add_new_bait" xml:space="preserve">
+    <value>Add new bait</value>
+  </data>
+  <data name="Add_new_mooch" xml:space="preserve">
+    <value>Add new mooch</value>
+  </data>
+  <data name="Presets_Hook" xml:space="preserve">
+    <value>Hook</value>
+  </data>
+  <data name="Mooch" xml:space="preserve">
+    <value>Mooch</value>
+  </data>
+  <data name="AutoCastLine_Auto_Cast_Line" xml:space="preserve">
+    <value>Auto Cast Line</value>
+  </data>
+  <data name="AutoMooch_HelpText" xml:space="preserve">
+    <value>This option have priority over Auto Cast Line</value>
+  </data>
+  <data name="Normal_Hook" xml:space="preserve">
+    <value>Normal Hook</value>
+  </data>
+  <data name="TabName_Default_Preset" xml:space="preserve">
+    <value>Default Preset</value>
+  </data>
+  <data name="Bait" xml:space="preserve">
+    <value>Bait</value>
+  </data>
+  <data name="All_Baits" xml:space="preserve">
+    <value>All Baits</value>
+  </data>
+  <data name="All_Mooches" xml:space="preserve">
+    <value>All Mooches</value>
+  </data>
+  <data name="AutoPatience_Patience" xml:space="preserve">
+    <value>Patience</value>
+  </data>
+  <data name="Fish" xml:space="preserve">
+    <value>Fish</value>
+  </data>
+  <data name="Add_new_fish" xml:space="preserve">
+    <value>Add new fish</value>
+  </data>
+  <data name="Cast_Line" xml:space="preserve">
+    <value>Cast Line</value>
+    <comment>Cast (fisher action)</comment>
+  </data>
+  <data name="Mooch_II" xml:space="preserve">
+    <value>Mooch II</value>
+  </data>
+  <data name="Never_Mooch" xml:space="preserve">
+    <value>Never Mooch</value>
+  </data>
+  <data name="Mooch_Setting" xml:space="preserve">
+    <value>Mooch Setting</value>
+  </data>
+  <data name="Swap_Preset" xml:space="preserve">
+    <value>Swap Preset</value>
+  </data>
+  <data name="Swap_Bait" xml:space="preserve">
+    <value>Swap Bait</value>
+  </data>
+  <data name="IdenticalCast_HelpText" xml:space="preserve">
+    <value>If disabled, mooching opportunity will be lost</value>
+  </data>
+  <data name="Always_Mooch" xml:space="preserve">
+    <value>Always Mooch</value>
+  </data>
+  <data name="Caught_Counter" xml:space="preserve">
+    <value>Caught:</value>
+    <comment>It'll shows how many times the fish was caught. Example: Caught: 5x</comment>
+  </data>
+  <data name="Hooked_Counter" xml:space="preserve">
+    <value>Hooked:</value>
+    <comment>It'll shows how many times the fish was caught. Example: Hooked: 5x</comment>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="StopFishing_After_hooking" xml:space="preserve">
+    <value>After hooking...</value>
+  </data>
+  <data name="Hooking_Limited_Reached_Chat_Message" xml:space="preserve">
+    <value>Hooking limit reached ({0}). Stopping fishing.</value>
+  </data>
+  <data name="Caught_Limited_Reached_Chat_Message" xml:space="preserve">
+    <value>Caught limit reached ({0}). Stopping fishing.</value>
+  </data>
+  <data name="Stop_Casting" xml:space="preserve">
+    <value>Stop Casting</value>
+  </data>
+  <data name="Auto_Cast_Stopped" xml:space="preserve">
+    <value>Auto casting will be stopped, but won't quit fishing</value>
+  </data>
+  <data name="Quit_Fishing" xml:space="preserve">
+    <value>Quit Fishing</value>
+  </data>
+  <data name="Quit_Action_HelpText" xml:space="preserve">
+    <value>Quit action will be used and completely stop fishing</value>
+  </data>
+  <data name="Tab_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="TabDefaultPreset_Description" xml:space="preserve">
+    <value>The default preset is used when no custom bait/mooch/fish/autocast is detected. Here you can set the hooking behavior that will be used for all baits and mooches unless a custom preset is created. 
+Check the Guide Tab for Guides.</value>
+  </data>
+  <data name="Old_Preset_Warning" xml:space="preserve">
+    <value>This is an old import, some settings might be missing.</value>
+  </data>
+  <data name="Show_Chat_Logs" xml:space="preserve">
+    <value>Show Chat Logs</value>
+  </data>
+  <data name="Show_Current_Status_Header" xml:space="preserve">
+    <value>Show Current Status Header</value>
+  </data>
+  <data name="DrawConfigs_Max_" xml:space="preserve">
+    <value>Max.</value>
+  </data>
+  <data name="DrawConfigs_Min_" xml:space="preserve">
+    <value>Min.</value>
+  </data>
+  <data name="Delay_Between_Casts" xml:space="preserve">
+    <value>Delay Between Casts (in ms):</value>
+  </data>
+  <data name="Show_Debug_Console" xml:space="preserve">
+    <value>Show Debug Console</value>
+  </data>
+  <data name="Show_Chat_Logs_HelpText" xml:space="preserve">
+    <value>Show messages like "Preset Swapped" in chat</value>
+  </data>
+  <data name="TabName_Config_Guides" xml:space="preserve">
+    <value>Config / Guides</value>
+  </data>
+  <data name="Open_Console" xml:space="preserve">
+    <value>Open Console</value>
+  </data>
+  <data name="SubAuto_Disabled" xml:space="preserve">
+    <value>Auto cast is disabled</value>
+  </data>
+  <data name="SubExtra_Disabled" xml:space="preserve">
+    <value>Extra options disabled</value>
+  </data>
+  <data name="Default_AutoCast_Being_Used" xml:space="preserve">
+    <value>[Default] auto cast is being used instead</value>
+  </data>
+  <data name="Custom_AutoCast_Being_Used" xml:space="preserve">
+    <value>Custom preset [{0}] Auto cast is being used instead</value>
+  </data>
+  <data name="Default_Extra_Being_Used" xml:space="preserve">
+    <value>[Default] Extra config is being used instead</value>
+  </data>
+  <data name="Custom_Extra_Being_Used" xml:space="preserve">
+    <value>Custom preset [{0}] Extra config is being used instead</value>
+  </data>
+  <data name="Auto_Cast_Alert_Manual_Hook" xml:space="preserve">
+    <value>Important! Auto Casts wont be used if you hook manually.</value>
+  </data>
+  <data name="Food_Buff" xml:space="preserve">
+    <value>Food Buff</value>
+  </data>
+  <data name="Only_When_Patience_Active" xml:space="preserve">
+    <value>Only use when patience is active</value>
+  </data>
+  <data name="Stop_After_Caught" xml:space="preserve">
+    <value>Stop After Caught</value>
+  </data>
+  <data name="Search_Hint" xml:space="preserve">
+    <value>Search...</value>
+    <comment>Hint Text for search bar</comment>
+  </data>
+  <data name="Extra" xml:space="preserve">
+    <value>Extra</value>
+  </data>
+  <data name="NeverReleaseHelptext" xml:space="preserve">
+    <value>This fish won't be released if 'Release All Fish' is enabled in the Auto Cast tab</value>
+  </data>
+  <data name="NeverRelease" xml:space="preserve">
+    <value>Never Release</value>
+  </data>
+  <data name="ReleaseAllFish" xml:space="preserve">
+    <value>Release All Fish</value>
+  </data>
+  <data name="ReleaseAllFishHelpText" xml:space="preserve">
+    <value>If you dont want to release a specific fish, add it to a preset and select "Never Release"</value>
+  </data>
+  <data name="Enable_Extra_Configs" xml:space="preserve">
+    <value>Enable Extra Configs</value>
+  </data>
+  <data name="When_gaining_fishers_intuition" xml:space="preserve">
+    <value>When gaining fisher's intuition...</value>
+  </data>
+  <data name="When_losing_fishers_intuition" xml:space="preserve">
+    <value>When losing fisher's intuition...</value>
+  </data>
+  <data name="Draw_Configs" xml:space="preserve">
+    <value>Configs</value>
+  </data>
+  <data name="Draw_Guides" xml:space="preserve">
+    <value>Guides</value>
+  </data>
+  <data name="Delay_when_hooking" xml:space="preserve">
+    <value>Delay when hooking</value>
+  </data>
+</root>

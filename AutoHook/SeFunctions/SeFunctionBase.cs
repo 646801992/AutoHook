@@ -2,7 +2,6 @@
 using System.Runtime.InteropServices;
 using Dalamud.Game;
 using Dalamud.Hooking;
-using Dalamud.Logging;
 
 namespace AutoHook.SeFunctions
 {
@@ -16,7 +15,7 @@ namespace AutoHook.SeFunctions
             Address = sigScanner.Module.BaseAddress + offset;
         }
 
-        public SeFunctionBase(SigScanner sigScanner, string signature, int offset = 0)
+        public SeFunctionBase(ISigScanner sigScanner, string signature, int offset = 0)
         {
             Address = sigScanner.ScanText(signature);
             if (Address != IntPtr.Zero)
@@ -35,7 +34,7 @@ namespace AutoHook.SeFunctions
                 return FuncDelegate;
             }
 
-            PluginLog.Error($"Trying to generate delegate for {GetType().Name}, but no pointer available.");
+            Service.PluginLog.Error($"Trying to generate delegate for {GetType().Name}, but no pointer available.");
             return null;
         }
 
@@ -51,7 +50,7 @@ namespace AutoHook.SeFunctions
             }
             else
             {
-                PluginLog.Error($"Trying to call {GetType().Name}, but no pointer available.");
+                Service.PrintDebug($"[SeFunctionBase] Trying to call {GetType().Name}, but no pointer available.");
                 return null;
             }
         }
@@ -60,12 +59,12 @@ namespace AutoHook.SeFunctions
         {
             if (Address != IntPtr.Zero)
             {
-                var hook = Hook<T>.FromAddress(Address, detour);
+                var hook = Service.GameInteropProvider.HookFromAddress<T>(Address, detour);
                 hook.Enable();
                 return hook;
             }
 
-            PluginLog.Error($"Trying to create Hook for {GetType().Name}, but no pointer available.");
+            Service.PrintDebug($"[SeFunctionBase] Trying to create Hook for {GetType().Name}, but no pointer available.");
             return null;
         }
     }

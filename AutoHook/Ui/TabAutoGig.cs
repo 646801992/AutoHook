@@ -1,61 +1,72 @@
-﻿using AutoHook.Classes;
-using AutoHook.Configurations;
-using AutoHook.Utils;
-using Dalamud.Interface;
-using GatherBuddy.Enums;
-using ImGuiNET;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using AutoHook.Resources.Localization;
+using AutoHook.Spearfishing.Enums;
+using AutoHook.Utils;
+using ImGuiNET;
 
 namespace AutoHook.Ui;
-internal class TabAutoGig : TabBaseConfig
+internal class TabAutoGig : BaseTab
 {
-    public override string TabName => "自动刺鱼";
+    public override string TabName => UIStrings.TabNameAutoGig;
     public override bool Enabled => true;
 
     private readonly List<SpearfishSpeed> _speedTypes = Enum.GetValues(typeof(SpearfishSpeed)).Cast<SpearfishSpeed>().ToList();
     private readonly List<SpearfishSize> _sizeTypes = Enum.GetValues(typeof(SpearfishSize)).Cast<SpearfishSize>().ToList();
-
+    
+    private bool _showDescription;
     public override void DrawHeader()
     {
+        
         ImGui.Spacing();
-        ImGui.TextWrapped("实验性功能，可能会错过一些鱼，如果你错过了太多鱼，可能需要调节不同的窗口尺寸");
+        
+        if (ImGui.TreeNodeEx(UIStrings.Tab_Description, ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.FramePadding))
+        {
+            _showDescription = true;
+            ImGui.TreePop();
+        }
+        else
+            _showDescription = false;
+
+        // Ugly implementation, but it looks good enough for now.
+        if (_showDescription)
+        {
+            ImGui.TextWrapped(UIStrings.TabAutoGigDescription);
+        }
         ImGui.Spacing();
     }
 
     public override void Draw()
     {
-        if (DrawUtil.Checkbox("启用自动刺鱼", ref Service.Configuration.AutoGigEnabled))
+        if (DrawUtil.Checkbox(UIStrings.EnableAutoGig, ref Service.Configuration.AutoGigEnabled))
         {
             if (Service.Configuration.AutoGigEnabled)
             {
                 Service.Configuration.AutoGigHideOverlay = false;
-                Service.Configuration.Save();
+                Service.Save();
             }
         }
 
         if (!Service.Configuration.AutoGigEnabled)
         {
             ImGui.Indent();
-            if (DrawUtil.Checkbox("刺鱼时显示覆盖层", ref Service.Configuration.AutoGigHideOverlay, "仅当关闭自动刺鱼时显示"))
+            if (DrawUtil.Checkbox(UIStrings.HideOverlayDuringSpearfishing, ref Service.Configuration.AutoGigHideOverlay, UIStrings.AutoGigHideOverlayHelpMarker))
             {
-                Service.Configuration.Save();
+                Service.Save();
             }
 
             ImGui.Unindent();
         } else
         {
             ImGui.Indent();
-            if (DrawUtil.Checkbox("Draw fish hitbox", ref Service.Configuration.AutoGigDrawFishHitbox, "The hitbox its only available for the fish of the Size and Speed selected"))
+            if (DrawUtil.Checkbox(UIStrings.DrawFishHitbox, ref Service.Configuration.AutoGigDrawFishHitbox, UIStrings.DrawFishHitboxHelpMarker))
             {
-                Service.Configuration.Save();
+                Service.Save();
             }
-            if (DrawUtil.Checkbox("Draw gig hitbox", ref Service.Configuration.AutoGigDrawGigHitbox))
+            if (DrawUtil.Checkbox(UIStrings.DrawGigHitbox, ref Service.Configuration.AutoGigDrawGigHitbox))
             {
-                Service.Configuration.Save();
+                Service.Save();
             }
             ImGui.Unindent();
         }
@@ -68,17 +79,17 @@ internal class TabAutoGig : TabBaseConfig
     private void DrawSpeedSize()
     {
         ImGui.Spacing();
-        ImGui.TextWrapped("选择你需要鱼的尺寸和速度 (Gatherbuddy的刺鱼悬浮窗非常有用)");
+        ImGui.TextWrapped(UIStrings.SelectTheSizeAndSpeed);
         ImGui.Spacing();
 
         ImGui.SetNextItemWidth(130);
-        if (ImGui.BeginCombo("尺寸", Service.Configuration.currentSize.ToName()))
+        if (ImGui.BeginCombo(UIStrings.Size, Service.Configuration.CurrentSize.ToName()))
         {
 
             foreach (SpearfishSize size in _sizeTypes.Where(size =>
-                        ImGui.Selectable(size.ToName(), size == Service.Configuration.currentSize)))
+                        ImGui.Selectable(size.ToName(), size == Service.Configuration.CurrentSize)))
             {
-                Service.Configuration.currentSize = size;
+                Service.Configuration.CurrentSize = size;
             }
             ImGui.EndCombo();
         }
@@ -86,12 +97,12 @@ internal class TabAutoGig : TabBaseConfig
         ImGui.SameLine();
 
         ImGui.SetNextItemWidth(130);
-        if (ImGui.BeginCombo("速度", Service.Configuration.currentSpeed.ToName()))
+        if (ImGui.BeginCombo(UIStrings.Speed, Service.Configuration.CurrentSpeed.ToName()))
         {
             foreach (SpearfishSpeed speed in _speedTypes.Where(speed =>
-                        ImGui.Selectable(speed.ToName(), speed == Service.Configuration.currentSpeed)))
+                        ImGui.Selectable(speed.ToName(), speed == Service.Configuration.CurrentSpeed)))
             {
-                Service.Configuration.currentSpeed = speed;
+                Service.Configuration.CurrentSpeed = speed;
             }
             ImGui.EndCombo();
         }

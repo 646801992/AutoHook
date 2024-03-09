@@ -16,7 +16,7 @@ namespace AutoHook.Ui;
 class TabPresets : TabBaseConfig
 {
     public override bool Enabled => true;
-    public override string TabName => "Custom Presets";
+    public override string TabName => "预设";
 
     private bool _hasPreset = false;
 
@@ -31,8 +31,8 @@ class TabPresets : TabBaseConfig
     {
         _hasPreset = cfg.CurrentPreset != null;
 
-        ImGui.TextWrapped("Here you can customize which hook to use based on the current bait or fish being mooched.\nIf a bait/fish is not specified, the default behavior (General Tab) will be used instead.");
-        if (ImGui.Button("Add New Preset"))
+        ImGui.TextWrapped("您可以根据当前的钓饵或鱼(以小钓大)来定制要使用的配置。\n如果未指定鱼饵/鱼，则将使用默认行为（常规选项卡）。");
+        if (ImGui.Button("新建预设配置"))
         {
             try
             {
@@ -50,7 +50,7 @@ class TabPresets : TabBaseConfig
 
         ImGui.SetNextItemWidth(130);
 
-        if (ImGui.BeginCombo("Hook Presets", cfg.CurrentPreset == null ? "None" : cfg.CurrentPreset.PresetName))
+        if (ImGui.BeginCombo("选择配置", cfg.CurrentPreset == null ? "未选择" : cfg.CurrentPreset.PresetName))
         {
             foreach (BaitPresetConfig preset in cfg.BaitPresetList)
             {
@@ -63,16 +63,16 @@ class TabPresets : TabBaseConfig
         }
 
         if (ImGui.IsItemHovered())
-            ImGui.SetTooltip("Right-click to rename");
+            ImGui.SetTooltip("右键点击重命名");
 
         if (_hasPreset)
         {
-            if (ImGui.BeginPopupContextItem("PresetName###name"))
+            if (ImGui.BeginPopupContextItem("配置名称###name"))
             {
                 string name = cfg.CurrentPreset?.PresetName ?? "-";
-                ImGui.Text("Edit Preset name (press Enter to confirm)");
+                ImGui.Text("编辑配置名称 (按回车确认)");
 
-                if (ImGui.InputText("Preset Name", ref name, 64, ImGuiInputTextFlags.AutoSelectAll | ImGuiInputTextFlags.EnterReturnsTrue))
+                if (ImGui.InputText("配置名称", ref name, 64, ImGuiInputTextFlags.AutoSelectAll | ImGuiInputTextFlags.EnterReturnsTrue))
                 {
                     if (cfg.CurrentPreset != null && !Service.Configuration.BaitPresetList.Contains(new(name)))
                     {
@@ -81,7 +81,7 @@ class TabPresets : TabBaseConfig
                     }
                 }
 
-                if (ImGui.Button("Close"))
+                if (ImGui.Button("关闭"))
                     ImGui.CloseCurrentPopup();
 
                 ImGui.EndPopup();
@@ -104,7 +104,7 @@ class TabPresets : TabBaseConfig
         ImGui.PopFont();
 
         if (ImGui.IsItemHovered())
-            ImGui.SetTooltip("Hold SHIFT to delete.");
+            ImGui.SetTooltip("按住SHIFT删除");
 
         ImGui.Spacing();
 
@@ -115,9 +115,9 @@ class TabPresets : TabBaseConfig
 
         if (_hasPreset)
         {
-            if (ImGui.Button("Add"))
+            if (ImGui.Button("添加"))
             {
-                var setting = new BaitConfig("EditMe");
+                var setting = new BaitConfig("编辑");
                 if (cfg.CurrentPreset != null && !cfg.CurrentPreset.ListOfBaits.Contains(setting))
                     cfg.CurrentPreset.ListOfBaits.Add(setting);
 
@@ -125,18 +125,18 @@ class TabPresets : TabBaseConfig
             }
 
             ImGui.SameLine();
-            ImGui.Text($"New bait/fish ({cfg.CurrentPreset?.ListOfBaits.Count})");
+            ImGui.Text($"添加鱼饵/鱼 ({cfg.CurrentPreset?.ListOfBaits.Count})");
             ImGui.SameLine();
-            ImGuiComponents.HelpMarker("Make sure to edit the bait/fish name correctly like ingame (Ex: Versatile Lure)");
+            ImGuiComponents.HelpMarker("确保鱼饵/鱼的名称与游戏中相同 (例如: 万能拟饵)");
 
             // I hate ImGui and i dont care to make this look good
             ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.DalamudYellow);
-            ImGui.TextWrapped("Auto Mooch");
+            ImGui.TextWrapped("自动以小钓大");
             ImGui.PopStyleColor();
             ImGui.SameLine();
-            ImGui.TextWrapped("is enabled by default when new bait/fish is added ");
+            ImGui.TextWrapped("在添加新鱼饵/鱼时默认启用");
 
-            if (ImGui.Button("Add Current Bait/Fish"))
+            if (ImGui.Button("添加当前鱼饵/鱼"))
             {
                 var setting = new BaitConfig(HookingManager.CurrentBait ?? "-");
 
@@ -147,7 +147,7 @@ class TabPresets : TabBaseConfig
             }
 
             ImGui.SameLine();
-            if (ImGui.Button($"Add Last Catch: {HookingManager.LastCatch ?? "-"}"))
+            if (ImGui.Button($"添加最后使用钓到的鱼: {HookingManager.LastCatch ?? "-"}"))
             {
                 var setting = new BaitConfig(HookingManager.LastCatch ?? "-");
 
@@ -157,7 +157,7 @@ class TabPresets : TabBaseConfig
                 cfg.Save();
             }
 
-            ImGui.Text($"Current bait/fish:");
+            ImGui.Text($"最近使用的鱼饵/鱼:");
             ImGui.SameLine();
             ImGui.TextColored(ImGuiColors.HealerGreen, HookingManager.CurrentBait ?? "-");
         }
@@ -175,7 +175,7 @@ class TabPresets : TabBaseConfig
             {
                 ImGui.SetClipboardText(Configuration.ExportActionStack(cfg.CurrentPreset!));
 
-                _alertMessage = "Preset exported to the clipboard";
+                _alertMessage = "导出配置到剪贴板";
                 _alertTimer.Start();
             }
             catch (Exception e)
@@ -189,7 +189,7 @@ class TabPresets : TabBaseConfig
         ImGui.PopFont();
 
         if (ImGui.IsItemHovered())
-            ImGui.SetTooltip("Export preset to clipboard.");
+            ImGui.SetTooltip("导出配置到剪贴板");
 
         ImGui.SameLine();
 
@@ -203,7 +203,7 @@ class TabPresets : TabBaseConfig
 
                 if (_tempImport != null)
                 {
-                    ImGui.OpenPopup("import_new_preset");
+                    ImGui.OpenPopup("导入配置");
                 }
             }
             catch (Exception e)
@@ -218,21 +218,21 @@ class TabPresets : TabBaseConfig
 
         if (_tempImport != null)
         {
-            if (ImGui.BeginPopup("import_new_preset"))
+            if (ImGui.BeginPopup("导入配置"))
             {
                 string name = _tempImport.PresetName;
-                ImGui.Text("Import this preset?");
+                ImGui.Text("确认导入配置?");
 
-                if (ImGui.InputText("Preset Name", ref name, 64, ImGuiInputTextFlags.AutoSelectAll))
+                if (ImGui.InputText("配置名称", ref name, 64, ImGuiInputTextFlags.AutoSelectAll))
                 {
                     _tempImport.RenamePreset(name);
                 }
 
-                if (ImGui.Button("Import"))
+                if (ImGui.Button("导入"))
                 {
                     if (Service.Configuration.BaitPresetList.Contains(new(name)))
                     {
-                        _alertMessage = "A preset with the same name already exists";
+                        _alertMessage = "配置名称重复";
                         _alertTimer.Start();
                     }
                     else
@@ -247,7 +247,7 @@ class TabPresets : TabBaseConfig
 
                 ImGui.SameLine();
 
-                if (ImGui.Button("Cancel"))
+                if (ImGui.Button("取消"))
                 {
                     _tempImport = null;
                     ImGui.CloseCurrentPopup();
@@ -260,7 +260,7 @@ class TabPresets : TabBaseConfig
         }
 
         if (ImGui.IsItemHovered())
-            ImGui.SetTooltip("Import stack from clipboard.");
+            ImGui.SetTooltip("从剪贴板导入.");
 
         TimedWarning();
     }

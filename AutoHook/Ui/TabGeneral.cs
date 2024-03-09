@@ -13,11 +13,11 @@ namespace AutoHook.Ui;
 internal class TabGeneral : TabBaseConfig
 {
     public override bool Enabled => true;
-    public override string TabName => "ͨ通用";
+    public override string TabName => "通用";
 
     public override void DrawHeader()
     {
-        ImGui.Text("ͨ通用设置");
+        ImGui.Text("通用设置");
 
         ImGui.Separator();
 

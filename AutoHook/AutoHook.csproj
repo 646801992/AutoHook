@@ -22,8 +22,8 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<DalamudLibPath>$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
-		<OutputPath>$(appdata)\XIVLauncher\devPlugins\AutoHook</OutputPath>
+		<DalamudLibPath>D:\Dalamud\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+		<OutputPath>D:\Dalamud Plugins\AutoHook</OutputPath>
 	</PropertyGroup>
 	
 	<ItemGroup>
@@ -47,7 +47,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="DalamudPackager" Version="2.1.10" />
+		<PackageReference Include="DalamudPackager" Version="2.1.12" />
 		<Reference Include="FFXIVClientStructs">
 			<HintPath>$(DalamudLibPath)FFXIVClientStructs.dll</HintPath>
 			<Private>false</Private>

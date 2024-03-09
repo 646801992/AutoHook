@@ -340,14 +340,14 @@ abstract class TabBaseConfig : IDisposable
     public void DrawStopAfter(BaitConfig cfg)
     {
 
-        if (ImGui.Button("ͣ停止垂钓当..."))
+        if (ImGui.Button("停止垂钓当..."))
         {
             ImGui.OpenPopup(str_id: "stop_after");
         }
 
         if (ImGui.BeginPopup("stop_after"))
         {
-            ImGui.TextColored(ImGuiColors.DalamudYellow, "ֹͣ停止垂钓");
+            ImGui.TextColored(ImGuiColors.DalamudYellow, "停止垂钓");
             ImGui.Spacing();
             if (DrawUtil.Checkbox("钓起", ref cfg.StopAfterCaught, "- 如果在鱼饵中设置: 会根据提钩次数计数停止。\n- 如果在钓鱼中设置: 会根据鱼获数量计数停止。"))
             {

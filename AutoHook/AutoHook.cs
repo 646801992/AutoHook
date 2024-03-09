@@ -47,27 +47,27 @@ public class AutoHook : IDalamudPlugin
 
         Service.Commands.AddHandler(CmdAHOff, new CommandInfo(OnCommand)
         {
-            HelpMessage = "Disables AutoHook"
+            HelpMessage = "天才妹妹停止钓鱼"
         });
 
         Service.Commands.AddHandler(CmdAHOn, new CommandInfo(OnCommand)
         {
-            HelpMessage = "Enables AutoHook"
+            HelpMessage = "天才妹妹开始钓鱼"
         });
 
         Service.Commands.AddHandler(CmdAHCfg, new CommandInfo(OnCommand)
         {
-            HelpMessage = "Opens Config Window"
+            HelpMessage = "打开设置窗口"
         });
 
         Service.Commands.AddHandler(CmdAH, new CommandInfo(OnCommand)
         {
-            HelpMessage = "Opens Config Window"
+            HelpMessage = "打开设置窗口"
         });
 
         Service.Commands.AddHandler(CmdAHTG, new CommandInfo(OnCommand)
         {
-            HelpMessage = "Toogles AutoHook On/Off"
+            HelpMessage = "切换天才妹妹状态"
         });
 
         HookManager = new HookingManager();
@@ -87,13 +87,13 @@ public class AutoHook : IDalamudPlugin
 
         if (command.Trim().Equals(CmdAHOn))
         {
-            Service.Chat.Print("AutoHook Enabled");
+            Service.Chat.Print("天才妹妹开始钓鱼");
             Service.Configuration.PluginEnabled = true;
         }
 
         if (command.Trim().Equals(CmdAHOff))
         {
-            Service.Chat.Print("AutoHook Disabled");
+            Service.Chat.Print("天才妹妹停止钓鱼");
             Service.Configuration.PluginEnabled = false;
         }
 
@@ -101,12 +101,12 @@ public class AutoHook : IDalamudPlugin
         {
             if (Service.Configuration.PluginEnabled)
             {
-                Service.Chat.Print("AutoHook Disabled");
+                Service.Chat.Print("天才妹妹停止钓鱼");
                 Service.Configuration.PluginEnabled = false;
             }
             else
             {
-                Service.Chat.Print("AutoHook Enabled");
+                Service.Chat.Print("天才妹妹开始钓鱼");
                 Service.Configuration.PluginEnabled = true;
             }
         }

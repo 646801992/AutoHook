@@ -1,8 +1,8 @@
 {
   "Author": "Det",
-  "Name": "(old) Auto Hook",
-  "Punchline": "New Repo: https://love.puni.sh/ment.json",
-  "Description": "Please update to the new repo, your settings will be preserved.",
+  "Name": "天才妹妹帮你钓鱼",
+  "Punchline": "Makes fishing less (or more) boring",
+  "Description": "天才妹妹帮你钓鱼",
   "InternalName": "AutoHook",
   "RepoUrl": "https://puni.sh/plugin/AutoHook",
   "ApplicableVersion": "any",
